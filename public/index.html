@@ -1,0 +1,336 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- bulma CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+      href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;700&display=swap" 
+      />
+    <!-- Font Awesome -->
+    <script
+      src="https://kit.fontawesome.com/8a80b728dc.js"
+      crossorigin="anonymous"
+    ></script>
+    <title>True Line Fitness</title>
+    <body class="has-background-light">
+  
+  </head>
+
+  <body>
+    <div class="modal" id="signup_modal">
+      <div class="modal-background" id="signup_modalbg"></div>
+      <div class="modal-content p-6 has-background-white">
+        <h1 class="is-size-3 title">Sign Up!</h1>
+        <form id="signup_form">
+          <!-- Email -->
+          <div class="field">
+            <label class="label">Email</label>
+            <div class="control">
+              <input type="email" id="email" />
+            </div>
+          </div>
+          <!-- Password -->
+          <div class="field">
+            <label class="label">Password</label>
+            <div class="control">
+              <input type="password" id="password" />
+            </div>
+          </div>
+
+          <!-- submit -->
+          <div class="field">
+            <div class="control">
+              <button class="m-3 button has-background-danger-dark has-text-white">Submit</button>
+            </div>
+          </div>
+
+          <!-- div error -->
+          <div class="error has-text-danger"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- sign in modal -->
+
+    <div class="modal" id="signin_modal">
+      <div class="modal-background" id="signin_modalbg"></div>
+      <div class="modal-content p-6 has-background-white">
+        <h1 class="is-size-3 title">Sign In!</h1>
+        <form id="signin_form">
+          <!-- Email -->
+          <div class="field">
+            <label class="label">Email</label>
+            <div class="control">
+              <input type="email" id="email_" />
+            </div>
+          </div>
+          <!-- Password -->
+          <div class="field">
+            <label class="label">Password</label>
+            <div class="control">
+              <input type="password" id="password_" />
+            </div>
+          </div>
+
+          <!-- submit -->
+          <div class="field">
+            <div class="control">
+              <button class="m-3 button has-background-danger-dark has-text-white">Submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- navigation bar -->
+    <div class="navbar has-background-info-light">
+      <div class="navbar-brand">
+        <div class="navbar-item">
+          <a class="has-text-info-dark">Home</a>
+          <a class="navbar-item has-text-info-dark" href="#" id="passes-link">Buy Passes</a>
+          <a class="navbar-item has-text-info-dark" href="#" id="splash-link">Splash!</a>
+          <a class="navbar-item has-text-info-dark" href="mailto:info@truelinefitness.com" >Contact Us</a>
+          </div>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+      </div>
+      <div class="navbar-menu is-active">
+        <div class="navbar-end">
+          <div class="navbar-item signedin">
+            <span id="current_user" class="has-text-info-dark"></span>
+          </div>
+          <div class="navbar-item signedout ">
+            <a id="signupbtn" class="has-text-info-dark">Sign Up</a>
+          </div>
+          <div class="navbar-item signedout is-white">
+            <a id="signinbtn" class="has-text-info-dark">Sign In</a>
+          </div>
+          <div class="navbar-item signedin is-white">
+            <a id="signoutbtn" class="has-text-info-dark">Sign Out</a>
+          </div>
+          <div class="navbar-item signedin">
+            <a id="postHousingBtn" class="has-text-info-dark">Review Us!</a>
+          </div>
+          </div>
+      </div>
+    </div>
+    <!-- messages bar -->
+    <div
+      class="p-3 has-background-light is-hidden has-text-centered"
+      id="messages"
+    ></div>
+
+    <section>
+    <main id="main">
+        <div id="mydiv" >
+        <img src="Untitled (18 x 6.7 in).png" alt="" style="width: 100%;object-fit: cover;">       
+          <!-- Sections -->
+                  <section class="section pt-1" id="home">
+                      <div class="container">
+                        <p class="subtitle mt-3 pt-3 is-6 has-text-centered has-text-text">
+                          In our classes we emphasize Foundation Training, based on the work of Dr. Eric Goodman. This is a holistic approach to improving posture, alleviating pain and enhancing overall physical wellbeing. In a dynamic series of movements and poses, Foundation Training will help you decompress your spine, improve your breath-work, connect your posterior chain and activate your inner core to create healthy and more beautiful movement patterns, improve your posture, and reduce your risk for injuries and pain. 
+
+                        </p>
+                        <br>
+                      </div>
+  
+                      <div class="columns">
+                        <!-- Left Column -->
+                        <div class="column is-one-third has-background-white" id="l_col">
+                          <h2 class="title is-5 has-text-info-dark has-background-info-light p-3 is-flex has-text-centered" style=" height:75px; align-items: center; justify-content: center;"> &nbsp;UPCOMING EVENTS</h2>
+                                    <!-- Boxes -->
+          <div class="box has-background-info-light">
+            <div class="columns">
+              <div class="column">
+                <p class="title is-5 mb-0 has-text-centered">Introduction to Foundation Training 5 Class Series</p>
+                <p class="mt-0 mb-3 has-text-centered"> Wed Feb 5 | Madison</p>
+                <p class="has-text-centered">
+                  Join Jenner McLeod, certified Foundation Training instructor, as she guides you through the essential elements of healthy posture and biomechanics. Learn to leave pain behind and improve your performance. This series is specifically designed for those new to Foundation Training
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="box has-background-info-light">
+            <div class="columns">
+              <div class="column">
+                <p class="title is-5 mb-0 has-text-centered">Another</p>
+                <p class="mt-0 mb-3 has-text-centered"> Another</p>
+                <p class="has-text-centered">
+Another                </p>
+              </div>
+            </div>
+          </div>
+
+                        </div>
+                                  
+                        <!-- Center Column -->
+<div class="column is-one-third" id="main_content">
+  <h2 class="title is-5 has-text-info-dark has-background-info-light p-3 is-flex has-text-centered" style=" height:75px; align-items: center; justify-content: center;">
+      &nbsp;CLASS SCHEDULES
+  </h2>
+  
+  
+  <!-- Static content -->
+  <div class="box has-background-white">
+    <div class="columns">
+      <div class="column">
+        <p class="title is-5 mb-0 has-text-centered">True North Mornings</p>
+        <p class="mt-0 mb-3 has-text-centered"> Tuesdays 11:00 am | Online</p>
+        <p class="has-text-centered">
+          45-minutes of Foundation Training plus optional 15-minute Q&A        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="box has-background-white">
+    <div class="columns">
+      <div class="column">
+        <p class="title is-5 mb-0 has-text-centered">Pure FT</p>
+        <p class="mt-0 mb-3 has-text-centered"> Saturdays 8:15 am | Studio Melt</p>
+        <p class="has-text-centered">
+          This 45 minute long Pure Foundation Training class is suitable for all levels.                 </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="box has-background-white">
+    <div class="columns">
+      <div class="column">
+        <p class="title is-5 mb-0 has-text-centered">FT Basecamp</p>
+        <p class="mt-0 mb-3 has-text-centered"> Wednesdays 5:30 pm | Studio Melt</p>
+        <p class="has-text-centered">
+          It is time to return to base camp with proper hinging, anchoring, and breathing patterns. In this 45 minute Foundation Training class, you will practice the core principles of this work in standing, kneeling, supine, and prone positions.  Whatever your day holds, from work to family to fitness, it never hurts into return to base camp. Join Jenner on Wednesday evenings at Studio Melt to reset and ground your body with proper breathing and movement patterns.  This class is designed for beginners and pros a like. Every single body can benefit from this work.         </p>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="box has-background-white">
+    <div class="columns">
+      <div class="column">
+        <p class="title is-5 mb-0 has-text-centered">Private Sessions with Jenner</p>
+        <p class="mt-0 mb-3 has-text-centered"> TBD </p>
+        <p class="has-text-centered">
+          1:1 Foundation Training session catered to you. Schedule a time with Jenner directly through email: Jenner@truelinefitness.com        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic content area -->
+  <div id="dynamic_content" class="mt-4">
+      <!-- Dynamic content will be injected here -->
+  </div>
+
+  <!-- Hidden Review Form -->
+  <div class="container is-hidden" id="hidden_form">
+      <h1 class="title is-size-3">Review Us!</h1>
+      
+      
+    
+  
+
+      <form id="review_form">
+        <div class="field">
+          <label class="label">Name</label>
+          <div class="control">
+            <input class="input" type="text" placeholder="Your Name" id="review_name">
+          </div>
+        </div>
+      
+        <div class="field">
+          <div class="control">
+            <textarea class="textarea" placeholder="Your Review" id="housing_review" required></textarea>
+          </div>
+        </div>
+      
+        <div class="field is-grouped">
+          <div class="control">
+            <button class="button is-white" id="submit_housing_btn">Submit</button>
+          </div>
+        </div>
+      </form>
+  </div>
+</div>
+
+
+
+                        
+
+
+
+                      
+<!-- Right Column -->
+  <div class="column is-one-third has-background-white">  
+   <h2 class="title is-5 has-text-white has-background-info-light has-text-info-dark p-3 mb-0 is-flex has-text-centered" style=" height:75px; align-items: center; justify-content: center;"> &nbsp;CUSTOMER TESTIMONIALS</h2>
+        <div class="column">
+        <p class="bd-notification is-info pt-1 mt-1 "> </p>
+          <div>
+            <a id="user_reviews" class="has-text-info">My Reviews</a>
+          </div>
+          <input type="text" class="input mt-2 pb-2" id="search_bar" placeholder="Search reviews" />
+          <button class="button m-3 has-background-info-light is-white" id="search_btn">Search</button>
+          <button class="button m-3 has-background-info-light is-white" id="clear_search">Clear Search</button>
+      </div>
+    <div class="columns is-mobile is-one-quarter p-3">
+    <p class="bd-notification is-info" id="r_col"> 
+    </p>
+    </div>
+    </div>
+  </div>
+</div>
+
+                                              
+  <!-- footer -->
+    <footer class="footer is-flex is-justify-content-center mt-2 p-1">
+      <div class="content has-text-centered" style="width: fit-content">
+        <p>
+          <b>Copyright &copy; 2025 True Line Fitness</b><br />
+          301 W Beltline Hwy Suite 103<br />
+          Madison, WI 53713 <br />
+          info@truelinefitness.com
+        </p>
+      </div>
+    </footer>
+    
+    <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+
+    <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-storage.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-firestore.js"></script>
+
+    <script>
+
+      const firebaseConfig = {
+  apiKey: "AIzaSyDwTJmxa5MUqxDpvMOESrvS89WF95i1Xts",
+  authDomain: "is371-madison-area-housing.firebaseapp.com",
+  projectId: "is371-madison-area-housing",
+  storageBucket: "is371-madison-area-housing.firebasestorage.app",
+  messagingSenderId: "909836357236",
+  appId: "1:909836357236:web:f1c701d05ca6133f858b21"
+};
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      // define authentication variable
+      let auth = firebase.auth();
+      let db = firebase.firestore();
+    </script>
+    <script src="app.js"></script>
+  </body>
+</html>
+
