@@ -1,6 +1,3 @@
-
-
-
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -57,7 +54,6 @@
     </div>
 
     <!-- sign in modal -->
-
     <div class="modal" id="signin_modal">
       <div class="modal-background" id="signin_modalbg"></div>
       <div class="modal-content p-6 has-background-white">
@@ -124,44 +120,58 @@
           </div>
       </div>
     </div>
+    <!-- messages bar -->
+    <div
+      class="p-3 has-background-light is-hidden has-text-centered"
+      id="messages"
+    ></div>
 
+    <!-- main body w/ columns -->
     <section class="section">
-        <div class="container">
-            <h1 class="title has-text-centered">Contact Us</h1>
-            <p class="subtitle has-text-centered">Meet our instructors and learn about our story.</p>
-            
+        <class class="container">
+            <h1 class="title has-text-centered">Splash!</h1>
+            <p class="subtitle has-text-centered">Foundation Training for Swimmers</p>
+
             <div class="columns">
-                <div class="column is-half">
-                    <div class="box">
-                        <figure class="image is-128x128">
-                            <img src="instructor1.jpg" alt="Instructor 1">
-                        </figure>
-                        <h2 class="title is-4">Instructor 1</h2>
-                        <p>Email: <a href="mailto:instructor1@truelinefitness.com">instructor1@truelinefitness.com</a></p>
-                        <p>Bio: Expert in Foundation Training with years of experience.</p>
-                    </div>
+                <div class="column box">
+                <div class="columns">
+                <div class="column">
+                    <h2 class="title is-4">Workshop</h2></div>
+                    <div class="column">
+                    <figure class="image">
+                            <img src="X.jpg" alt="Splash img">
+                    </figure></div>
                 </div>
-                <div class="column is-half">
-                    <div class="box">
-                        <figure class="image is-128x128">
-                            <img src="instructor2.jpg" alt="Instructor 2">
-                        </figure>
-                        <h2 class="title is-4">Instructor 2</h2>
-                        <p>Email: <a href="mailto:instructor2@truelinefitness.com">instructor2@truelinefitness.com</a></p>
-                        <p>Bio: Specializes in posture and biomechanics training.</p>
-                    </div>
+                <p>For swimmers (and coaches). Utilize Foundation Training to learn and practice healthy posture, breathing, and biomechanics. You will be guided through exercises that will specifically help you feel better in the water and in your life.</p>
+                </div>
+                <div class="column box">
+                    <div class="columns">
+                <div class="column">
+                    <h2 class="title is-4">Online Consult: Athletes</h2></div>
+                    <div class="column">
+                    <figure class="image">
+                            <img src="X.jpg" alt="Splash img">
+                    </figure></div>
+                </div>
+                    <p>For up to two swimmers. Foundation Training can help you reach your fitness and performance goals. This 30 minute consultation will provide you with personalized exercises that will improve your life in and out of the water. Incorporate FT into your daily training. Start today!</p>
+                </div>
+                <div class="column box">
+                    <div class="columns">
+                <div class="column">
+                    <h2 class="title is-4">Online Consult: Athletes</h2></div>
+                    <div class="column">
+                    <figure class="image">
+                            <img src="X.jpg" alt="Splash img">
+                    </figure></div>
+                </div>
+                    <p>Individual. Foundation Training can help your athletes reach and even exceed their current fitness and performance goals. This 30 minute consultation will introduce you to alignment and breathing practices that will help your athletes improve their times while reducing their risk for injury. Incorporate FT into your training program today!</p>
                 </div>
             </div>
-            
-            <div class="box">
-                <h2 class="title is-4">Our Story</h2>
-                <p>True Line Fitness was founded with the goal of promoting holistic fitness through Foundation Training. Our mission is to help individuals achieve better posture, movement, and overall well-being.</p>
-            </div>
-        </div>
+        </class>
     </section>
-  
-                                   
-  <!-- footer -->
+</body>
+
+ <!-- footer -->
     <footer class="footer is-flex is-justify-content-center mt-2 p-1">
       <div class="content has-text-centered" style="width: fit-content">
         <p>
@@ -204,5 +214,3 @@
       let db = firebase.firestore();
     </script>
     <script src="app.js"></script>
-  </body>
-</html>
