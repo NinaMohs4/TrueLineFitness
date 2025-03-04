@@ -353,9 +353,31 @@ r_e("submit_housing_btn").addEventListener("click", (e) => {
 });
 
 // search
-r_e("search_btn").addEventListener("click", () => {
-  let val = r_e("search_bar").value;
-  search_housing("title", val);
+// r_e("search_btn").addEventListener("click", () => {
+//   let val = r_e("search_bar").value;
+//   search_housing("title", val);
+// });
+
+// Event listener to allow for proper filtering, always make lowercase
+//so that case is not a problem when filtering
+document.addEventListener("DOMContentLoaded", function () {
+  const searchBar = document.getElementById("search_bar");
+  const searchBtn = document.getElementById("search_btn");
+
+  //When search button is clicked, filter on whatever is currently stored
+  //within the searchbox
+  searchBtn.addEventListener("click", function () {
+    const filteredPhrase = searchBar.value.toLowerCase();
+    const reviewBoxes = document.querySelectorAll("#r_col .box");
+    //For every single box from querySelectorAll, run a function on them
+    //which makes all text lowercase and then checks if the filteredPhrase
+    //is contained within (substring), if so then display it and if not then
+    //do not display it
+    reviewBoxes.forEach(function (box) {
+      const text = box.textContent.toLowerCase();
+      box.style.display = text.includes(filteredPhrase) ? "" : "none";
+    });
+  });
 });
 
 r_e("clear_search").addEventListener("click", () => {
