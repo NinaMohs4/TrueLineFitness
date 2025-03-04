@@ -165,6 +165,7 @@ function show_housing(email) {
 function configure_nav_bar(email) {
   let signedin = document.querySelectorAll(".signedin");
   let signedout = document.querySelectorAll(".signedout");
+  let myReviewBtn = document.querySelector("#user_reviews"); // Select the My Review button
 
   if (email) {
     // User is signed in
@@ -174,6 +175,10 @@ function configure_nav_bar(email) {
     signedout.forEach((element) => {
       element.classList.add("is-hidden");
     });
+
+    if (myReviewBtn) {
+      myReviewBtn.classList.remove("is-hidden"); // Show My Review button
+    }
   } else {
     // No user is signed in
     signedin.forEach((element) => {
@@ -182,8 +187,23 @@ function configure_nav_bar(email) {
     signedout.forEach((element) => {
       element.classList.remove("is-hidden");
     });
+
+    if (myReviewBtn) {
+      myReviewBtn.classList.add("is-hidden"); // Hide My Review button
+    }
   }
 }
+
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    configure_nav_bar(auth.currentUser.email);
+    show_housing(auth.currentUser.email);
+    renderOptions(options);
+  } else {
+    configure_nav_bar();
+    show_housing();
+  }
+});
 
 function r_e(id) {
   return document.querySelector(`#${id}`);
@@ -343,30 +363,27 @@ r_e("clear_search").addEventListener("click", () => {
   show_housing(auth.currentUser.email);
 });
 
-
 r_e("user_reviews").addEventListener("click", () => {
   search_housing("email", auth.currentUser.email);
 });
-
 
 function r_e(id) {
   return document.querySelector(`#${id}`);
 }
 
+// Function to load content dynamically
+function loadContent(content) {
+  document.querySelector("#dynamic_content").innerHTML = content;
+}
 
-  // Function to load content dynamically
-  function loadContent(content) {
-    document.querySelector("#dynamic_content").innerHTML = content;
-  }
+// Toggle navbar menu visibility on small screens
+document.addEventListener("DOMContentLoaded", () => {
+  const navbarBurger = document.getElementById("navbarBurger");
+  const navbarMenu = document.getElementById("navbarMenu");
 
-  // Toggle navbar menu visibility on small screens
-  document.addEventListener("DOMContentLoaded", () => {
-    const navbarBurger = document.getElementById("navbarBurger");
-    const navbarMenu = document.getElementById("navbarMenu");
-
-    navbarBurger.addEventListener("click", () => {
-      // Toggle the "is-active" class on both the navbar burger and the menu
-      navbarBurger.classList.toggle("is-active");
-      navbarMenu.classList.toggle("is-active");
-    });
+  navbarBurger.addEventListener("click", () => {
+    // Toggle the "is-active" class on both the navbar burger and the menu
+    navbarBurger.classList.toggle("is-active");
+    navbarMenu.classList.toggle("is-active");
   });
+});
