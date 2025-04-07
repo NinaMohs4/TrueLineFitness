@@ -409,3 +409,37 @@ document.addEventListener("DOMContentLoaded", () => {
     navbarMenu.classList.toggle("is-active");
   });
 });
+
+// Creating Users, Enrollment, Reviews, and Classes Collections
+let u1 = {
+  user_id: 1,
+  user_name: "saelliott2",
+  user_email: "saelliott2@wisc.edu",
+  user_phone: 9202775411,
+  admin_status: true
+}
+
+let e1 = {
+  customer_id: 1,
+  class_id: 1,
+  order_date: Date("04/07/2025")
+}
+
+let r1 = {
+  review_id: 1,
+  user_id: 1,
+  rating: 5,
+  review_text: "Great Instuctors"
+}
+
+let c1 = {
+  class_id: 1,
+  class_name: "Class Name",
+  class_date: Date("04/07/2025"),
+  instructor: "Linda Guanti"
+}
+
+db.collection("users").doc("u1").set(u1)
+db.collection("enrollment").doc("e1").set(e1)
+db.collection("reviews").doc("r1").set(r1)
+db.collection("classes").doc("c1").set(c1)
