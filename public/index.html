@@ -116,7 +116,7 @@
             <a id="signoutbtn" class="has-text-info-dark">Sign Out</a>
           </div>
           <div class="navbar-item signedin">
-            <a id="postHousingBtn" class="has-text-info-dark">Review Us!</a>
+            <a id="postReviewBtn" class="has-text-info-dark">Review Us!</a>
           </div>
           </div>
       </div>
@@ -237,34 +237,46 @@
   </div>
 
   <!-- Hidden Review Form -->
-  <div class="container is-hidden" id="hidden_form">
-      <h1 class="title is-size-3">Review Us!</h1>
-      
-      
-    
-  
+  <!-- Review Modal -->
+<div class="modal" id="review_modal">
+  <div class="modal-background" id="review_modal_bg"></div>
+  <div class="modal-content p-6 has-background-white">
+    <h1 class="title is-size-3">Review Us!</h1>
 
-      <form id="review_form">
-        <div class="field">
-          <label class="label">Name</label>
-          <div class="control">
-            <input class="input" type="text" placeholder="Your Name" id="review_name">
-          </div>
+    <form id="review_form">
+      <div class="field">
+        <label class="label">Name</label>
+        <div class="control">
+          <input class="input" type="text" placeholder="Your Name" id="review_name">
         </div>
-      
-        <div class="field">
-          <div class="control">
-            <textarea class="textarea" placeholder="Your Review" id="housing_review" required></textarea>
-          </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Rating</label>
+        <div class="control">
+          <input class="input" type="number" min="1" max="5" placeholder="Enter Your Rating (1-5)" id="review_rating">
         </div>
-      
-        <div class="field is-grouped">
-          <div class="control">
-            <button class="button is-white" id="submit_housing_btn">Submit</button>
-          </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Your Review</label>
+        <div class="control">
+          <textarea class="textarea" placeholder="Your Review" id="fitness_review" required></textarea>
         </div>
-      </form>
+      </div>
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-info" id="submit_review_btn">Submit</button>
+        </div>
+        <div class="control">
+          <button class="button is-light" type="button" id="cancel_review_btn">Cancel</button>
+        </div>
+      </div>
+    </form>
   </div>
+</div>
+
 </div>
 
 

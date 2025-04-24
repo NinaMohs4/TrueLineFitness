@@ -8,92 +8,31 @@ let signinbtn = document.querySelector("#signinbtn");
 let signin_modal = document.querySelector("#signin_modal");
 let signin_modalbg = document.querySelector("#signin_modalbg");
 
-let postHousingBtn = document.querySelector("#postHousingBtn");
+let postReviewBtn = document.querySelector("#postReviewBtn");
 let hidden_form = document.querySelector("#hidden_form");
 let content = document.querySelector("#content");
 
 // functions
 
-function renderOptions(data) {
-  const contentDiv = document.getElementById("content");
-  contentDiv.innerHTML = ""; // Clear existing content
-
-  if (data.length > 0) {
-    data.forEach((option) => {
-      contentDiv.innerHTML += `
-        <div class="box">
-          <h3 class="title is-5">${option.name}</h3>
-          <p>Type: ${
-            option.type.charAt(0).toUpperCase() + option.type.slice(1)
-          }</p>
-          <p>Price: ${option.price}</p>
-          <p>Bedrooms: ${option.onebed ? "One bedroom/studio, " : ""}${
-        option.twobed ? "Two bedrooms, " : ""
-      }${option.threebed ? "Three bedrooms, " : ""}${
-        option.fourbed ? "Four bedrooms, " : ""
-      }${option.fiveplusbed ? "Five or more bedrooms" : ""}</p>
-          <p>Amenities: ${Object.keys(option)
-            .filter(
-              (key) =>
-                option[key] &&
-                [
-                  "ac",
-                  "commonareas",
-                  "laundry",
-                  "gym",
-                  "furnished",
-                  "parking",
-                  "dining",
-                ].includes(key)
-            )
-            .map((key) => {
-              switch (key) {
-                case "ac":
-                  return "Air Conditioning";
-                case "commonareas":
-                  return "Common Areas";
-                case "laundry":
-                  return "Laundry";
-                case "gym":
-                  return "Gym";
-                case "furnished":
-                  return "Furnished";
-                case "parking":
-                  return "Parking";
-                case "dining":
-                  return "Dining";
-                default:
-                  return key.replace(/_/g, " "); // Handles other cases if any
-              }
-            })
-            .join(", ")}</p>
-
-        </div>`;
-    });
-  } else {
-    contentDiv.innerHTML = "<p>No matching results found.</p>";
-  }
-}
-
 function del_doc(id) {
-  db.collection("housing")
+  db.collection("reviews")
     .doc(id)
     .delete()
     .then(() => {
-      configure_messages_bar("Housing review deleted successfully");
-      // show updated list of housing
-      show_housing(auth.currentUser.email);
+      configure_messages_bar("TrueLineFitness review deleted successfully");
+      // show updated list of reviews
+      show_reviews(auth.currentUser.email);
     });
 }
 
-// search housing
-function search_housing(field, val) {
+// search TrueLineFitness reviews
+function search_reviews(field, val) {
   if (!val) {
     r_e("r_col").innerHTML = "<p>Please enter a search term</p>";
     return;
   }
 
-  db.collection("housing")
+  db.collection("reviews")
     .where(field, "==", val)
     .get()
     .then((data) => {
@@ -118,18 +57,18 @@ function search_housing(field, val) {
       r_e("r_col").innerHTML = html;
     })
     .catch((error) => {
-      console.error("Error fetching housing data:", error);
+      console.error("Error fetching TrueLineFitness review data:", error);
       r_e("r_col").innerHTML = "<p>An error occurred while searching</p>";
     });
 }
 
-function show_housing(email) {
+function show_reviews(email) {
   const rightColumn = r_e("r_col");
   if (email) {
     r_e("l_col").classList.remove("is-hidden");
     r_e("r_col").classList.remove("is-hidden");
 
-    db.collection("housing")
+    db.collection("reviews")
       .get()
       .then((data) => {
         let html = ``;
@@ -141,6 +80,9 @@ function show_housing(email) {
               <h1 class="has-background-white title is-5 p-2 has-text-centered mb-0  has-text-weight-bold">${
                 d.data().name
               }</h1>
+              <p class="has-text-weight-semibold has-text-centered mt-1 mb-1">Rating: ${
+                d.data().rating
+              }/5 ⭐️</p>
 
               <p class="p-3">${d.data().desc}</p>
             </div>`;
@@ -150,7 +92,7 @@ function show_housing(email) {
         rightColumn.innerHTML = html;
       })
       .catch((error) => {
-        console.error("Error fetching housing data:", error);
+        console.error("Error fetching TrueLineFitness Review data:", error);
         rightColumn.innerHTML =
           "<p>An error occurred while loading reviews</p>";
       });
@@ -197,11 +139,11 @@ function configure_nav_bar(email) {
 auth.onAuthStateChanged((user) => {
   if (user) {
     configure_nav_bar(auth.currentUser.email);
-    show_housing(auth.currentUser.email);
+    show_reviews(auth.currentUser.email);
     renderOptions(options);
   } else {
     configure_nav_bar();
-    show_housing();
+    show_reviews();
   }
 });
 
@@ -243,9 +185,21 @@ signin_modalbg.addEventListener("click", () => {
 });
 
 // post review nav bar link
-postHousingBtn.addEventListener("click", () => {
-  hidden_form.classList.remove("is-hidden");
-  content.classList.add("is-hidden");
+postReviewBtn.addEventListener("click", () => {
+  r_e("review_modal").classList.add("is-active");
+});
+
+// Close the modal when clicking the background or Cancel or submitting properly
+r_e("review_modal_bg").addEventListener("click", () => {
+  r_e("review_modal").classList.remove("is-active");
+});
+
+r_e("submit_review_btn").addEventListener("click", () => {
+  r_e("review_modal").classList.remove("is-active");
+});
+
+r_e("cancel_review_btn").addEventListener("click", () => {
+  r_e("review_modal").classList.remove("is-active");
 });
 
 // user sign up
@@ -274,11 +228,11 @@ r_e("signup_form").addEventListener("submit", (e) => {
 auth.onAuthStateChanged((user) => {
   if (user) {
     configure_nav_bar(auth.currentUser.email);
-    show_housing(auth.currentUser.email);
+    show_reviews(auth.currentUser.email);
     renderOptions(options);
   } else {
     configure_nav_bar();
-    show_housing();
+    show_reviews();
   }
 });
 
@@ -312,35 +266,38 @@ r_e("signoutbtn").addEventListener("click", () => {
 
 // add / post review
 
-r_e("submit_housing_btn").addEventListener("click", (e) => {
+r_e("submit_review_btn").addEventListener("click", (e) => {
   e.preventDefault();
   let name = r_e("review_name").value; // Correctly fetch the name
-  let desc = r_e("housing_review").value;
+  let rating = r_e("review_rating").value; // Correctly fetch the name
+  let desc = r_e("fitness_review").value;
 
   // Validate form fields
-  if (!name || !desc) {
+  if (!name || !desc || !rating) {
     configure_messages_bar("All fields are required.");
     return;
   }
 
-  let housingReview = {
+  let fitnessReview = {
     name: name,
+    rating: rating,
     desc: desc,
     email: auth.currentUser.email,
     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
   };
 
   // Add the review to Firestore
-  db.collection("housing")
-    .add(housingReview)
+  db.collection("reviews")
+    .add(fitnessReview)
     .then(() => {
       r_e("review_name").value = ""; // Clear name field
-      r_e("housing_review").value = ""; // Clear review field
+      r_e("fitness_review").value = ""; // Clear review field
+      r_e("review_rating").value = "";
 
-      configure_messages_bar("Housing review added!");
+      configure_messages_bar("TrueLineFitness review added!");
 
       // Show the new review in the right column
-      show_housing(auth.currentUser.email);
+      show_reviews(auth.currentUser.email);
 
       // Hide the form and show content
       r_e("hidden_form").classList.add("is-hidden");
@@ -348,14 +305,14 @@ r_e("submit_housing_btn").addEventListener("click", (e) => {
     })
     .catch((error) => {
       console.error("Error adding review:", error);
-      configure_messages_bar("Failed to add housing review.");
+      configure_messages_bar("Failed to add TrueLineFitness review.");
     });
 });
 
 // search
 // r_e("search_btn").addEventListener("click", () => {
 //   let val = r_e("search_bar").value;
-//   search_housing("title", val);
+//   search_reviews("title", val);
 // });
 
 // Event listener to allow for proper filtering, always make lowercase
@@ -382,11 +339,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 r_e("clear_search").addEventListener("click", () => {
   document.getElementById("search_bar").value = "";
-  show_housing(auth.currentUser.email);
+  show_reviews(auth.currentUser.email);
 });
 
 r_e("user_reviews").addEventListener("click", () => {
-  search_housing("email", auth.currentUser.email);
+  search_reviews("email", auth.currentUser.email);
 });
 
 function r_e(id) {
@@ -441,5 +398,5 @@ let c1 = {
 
 db.collection("users").doc("u1").set(u1);
 db.collection("enrollment").doc("e1").set(e1);
-db.collection("reviews").doc("r1").set(r1);
+//db.collection("reviews").doc("r1").set(r1);
 db.collection("classes").doc("c1").set(c1);
