@@ -37,33 +37,47 @@ function search_reviews(field, val) {
     .get()
     .then((data) => {
       let html = ``;
-      let mydata = data.docs;
+      const userEmail = auth.currentUser?.email;
 
-      if (mydata.length === 0) {
+      if (data.empty) {
         r_e("r_col").innerHTML = "<p>No results found</p>";
         return;
       }
 
-      mydata.forEach((d) => {
+      data.docs.forEach((d) => {
+        const review = d.data();
+        const isOwner = review.email === userEmail;
+
         html += `
-          <div class="box" id="${d.id}">
-                        <h1 class="has-background-light p-3 has-text-weight-bold">${
-                          d.data().name
-                        }</h1>
-            <p class="p-3">${d.data().desc}</p>
+          <div class="box has-background-info-light" id="${d.id}">
+            <h1 class="has-background-white title is-5 p-2 has-text-centered mb-0 has-text-weight-bold">
+              ${review.name}
+            </h1>
+            <p class="has-text-weight-semibold has-text-centered mt-1 mb-1">
+              Rating: ${review.rating}/5 ⭐️
+            </p>
+            <p class="p-3">${review.desc}</p>
+            ${
+              isOwner
+                ? `<div class="has-text-right pr-2">
+                    <button class="button is-small is-danger" onclick="handleRemove('${d.id}')">Delete</button>
+                  </div>`
+                : ""
+            }
           </div>`;
       });
 
       r_e("r_col").innerHTML = html;
     })
     .catch((error) => {
-      console.error("Error fetching TrueLineFitness review data:", error);
-      r_e("r_col").innerHTML = "<p>An error occurred while searching</p>";
+      console.error("Error fetching filtered reviews:", error);
+      r_e("r_col").innerHTML = "<p>Error while searching reviews.</p>";
     });
 }
 
 function show_reviews(email) {
   const rightColumn = r_e("r_col");
+
   if (email) {
     r_e("l_col").classList.remove("is-hidden");
     r_e("r_col").classList.remove("is-hidden");
@@ -72,23 +86,24 @@ function show_reviews(email) {
       .get()
       .then((data) => {
         let html = ``;
-        let mydata = data.docs;
+        const userEmail = auth.currentUser.email;
 
-        mydata.forEach((d) => {
+        data.docs.forEach((d) => {
+          const review = d.data(); // Moved this inside the loop
+          const isOwner = review.email === userEmail;
+
           html += `
             <div class="box has-background-info-light" id="${d.id}">
-              <h1 class="has-background-white title is-5 p-2 has-text-centered mb-0  has-text-weight-bold">${
-                d.data().name
-              }</h1>
-              <p class="has-text-weight-semibold has-text-centered mt-1 mb-1">Rating: ${
-                d.data().rating
-              }/5 ⭐️</p>
-
-              <p class="p-3">${d.data().desc}</p>
+              <h1 class="has-background-white title is-5 p-2 has-text-centered mb-0 has-text-weight-bold">
+                ${review.name}
+              </h1>
+              <p class="has-text-weight-semibold has-text-centered mt-1 mb-1">
+                Rating: ${review.rating}/5 ⭐️
+              </p>
+              <p class="p-3">${review.desc}</p>
             </div>`;
         });
 
-        // Append reviews to the right column
         rightColumn.innerHTML = html;
       })
       .catch((error) => {
@@ -325,6 +340,22 @@ r_e("submit_review_btn").addEventListener("click", (e) => {
     });
 });
 
+function handleRemove(docId) {
+  if (confirm("Are you sure you want to delete this review?")) {
+    db.collection("reviews")
+      .doc(docId)
+      .delete()
+      .then(() => {
+        configure_messages_bar("Deleted Review");
+        show_reviews(auth.currentUser.email);
+      })
+      .catch((error) => {
+        console.error("Error deleting review:", error);
+        configure_messages_bar("Failed to delete review.");
+      });
+  }
+}
+
 // search
 // r_e("search_btn").addEventListener("click", () => {
 //   let val = r_e("search_bar").value;
@@ -413,6 +444,6 @@ let c1 = {
 };
 
 db.collection("users").doc("u1").set(u1);
-db.collection("enrollment").doc("e1").set(e1);
+//db.collection("enrollment").doc("e1").set(e1);
 //db.collection("reviews").doc("r1").set(r1);
-db.collection("classes").doc("c1").set(c1);
+//db.collection("classes").doc("c1").set(c1);
