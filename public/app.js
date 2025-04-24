@@ -262,13 +262,29 @@ r_e("signup_form").addEventListener("submit", (e) => {
   // console.log(email, pass);
 
   // send the user info to FB
-  auth.createUserWithEmailAndPassword(email, pass).then(() => {
-    // hide the modal
-    r_e("signup_modal").classList.remove("is-active");
-
-    // reset the sign up form
-    r_e("signup_form").reset();
-  });
+  auth
+    .createUserWithEmailAndPassword(email, pass)
+    .then((cred) => {
+      return db
+        .collection("users")
+        .doc(cred.user.uid)
+        .set({
+          user_id: cred.user.uid,
+          user_email: email,
+          user_name: email.split("@")[0],
+          user_phone: "", // or collect this from the form
+          admin_status: false,
+        });
+    })
+    .then(() => {
+      r_e("signup_modal").classList.remove("is-active");
+      r_e("signup_form").reset();
+      configure_messages_bar("Sign-up successful and user saved!");
+    })
+    .catch((err) => {
+      console.error("Sign-up error:", err);
+      configure_messages_bar("Error during sign-up");
+    });
 });
 
 auth.onAuthStateChanged((user) => {
