@@ -1,0 +1,222 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- bulma CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+      href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;700&display=swap" 
+      />
+    <!-- Font Awesome -->
+    <script
+      src="https://kit.fontawesome.com/8a80b728dc.js"
+      crossorigin="anonymous"
+    ></script>
+    <title>True Line Fitness</title>
+    <body class="has-background-light">
+  
+  </head>
+
+  <body>
+    <div class="modal" id="signup_modal">
+      <div class="modal-background" id="signup_modalbg"></div>
+      <div class="modal-content p-6 has-background-white">
+        <h1 class="is-size-3 title">Sign Up</h1>
+        <form id="signup_form">
+          <!-- Email -->
+          <div class="field">
+            <label class="label">Email</label>
+            <div class="control">
+              <input type="email" id="email" />
+            </div>
+          </div>
+          <!-- Password -->
+          <div class="field">
+            <label class="label">Password</label>
+            <div class="control">
+              <input type="password" id="password" />
+            </div>
+          </div>
+
+          <!-- submit -->
+          <div class="field">
+            <div class="control">
+              <button class="m-3 button has-background-danger-dark has-text-white">Submit</button>
+            </div>
+          </div>
+
+          <!-- div error -->
+          <div class="error has-text-danger"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- sign in modal -->
+    <div class="modal" id="signin_modal">
+      <div class="modal-background" id="signin_modalbg"></div>
+      <div class="modal-content p-6 has-background-white">
+        <h1 class="is-size-3 title">Sign In!</h1>
+        <form id="signin_form">
+          <!-- Email -->
+          <div class="field">
+            <label class="label">Email</label>
+            <div class="control">
+              <input type="email" id="email_" />
+            </div>
+          </div>
+          <!-- Password -->
+          <div class="field">
+            <label class="label">Password</label>
+            <div class="control">
+              <input type="password" id="password_" />
+            </div>
+          </div>
+
+          <!-- submit -->
+          <div class="field">
+            <div class="control">
+              <button class="m-3 button has-background-danger-dark has-text-white">Submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- navigation bar -->
+    <div class="navbar has-background-info-light">
+      <div class="navbar-brand">
+        <div class="navbar-item">
+          <a class="has-text-info-dark" href="index.html">Home</a>
+          <a class="navbar-item has-text-info-dark" href="#" id="passes-link">Buy Passes</a>
+          <a class="navbar-item has-text-info-dark" href="splash.html" id="splash-link">Splash!</a>
+          <a class="navbar-item has-text-info-dark" href="contact.html" id="contact-link">Contact Us</a>
+          </div>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+      </div>
+      <div class="navbar-menu is-active">
+        <div class="navbar-end">
+          <div class="navbar-item signedin">
+            <span id="current_user" class="has-text-info-dark"></span>
+          </div>
+          <div class="navbar-item signedout ">
+            <a id="signupbtn" class="has-text-info-dark">Sign Up</a>
+          </div>
+          <div class="navbar-item signedout is-white">
+            <a id="signinbtn" class="has-text-info-dark">Sign In</a>
+          </div>
+          <div class="navbar-item signedin is-white">
+            <a id="signoutbtn" class="has-text-info-dark">Sign Out</a>
+          </div>
+          <div class="navbar-item signedin">
+            <a id="postHousingBtn" class="has-text-info-dark">Review Us!</a>
+          </div>
+          </div>
+      </div>
+    </div>
+    <!-- messages bar -->
+    <div
+      class="p-3 has-background-light is-hidden has-text-centered"
+      id="messages"
+    ></div>
+
+    <!-- main body w/ columns -->
+    <section class="section">
+      <div class="container">
+          <h1 class="title has-text-centered">Splash!</h1>
+          <p class="subtitle has-text-centered">Foundation Training for Swimmers</p>
+  
+          <div class="columns is-flex is-align-items-stretch">
+              <!-- Workshop Box -->
+              <div class="column">
+                  <div class="box is-fullheight">
+                      <div class="columns">
+                          <div class="column">
+                              <h2 class="title is-4 has-text-centered mt-3 pt-3">Workshop</h2>
+                          </div>
+                      </div>
+                      <p class="has-text-weight-bold has-text-centered">For swimmers (and coaches).</p>
+                      <p>Utilize Foundation Training to learn and practice healthy posture, breathing, and biomechanics. You will be guided through exercises that will specifically help you feel better in the water and in your life.</p>
+                  </div>
+              </div>
+  
+              <!-- Online Consult: Athletes -->
+              <div class="column">
+                  <div class="box is-fullheight">
+                      <div class="columns">
+                          <div class="column">
+                              <h2 class="title is-4 has-text-centered mt-3 pt-3">Online Consult: Athletes</h2>
+                          </div>
+                      </div>
+                      <p class="has-text-weight-bold has-text-centered">For up to two swimmers.</p>
+                      <p>Foundation Training can help you reach your fitness and performance goals. This 30-minute consultation will provide you with personalized exercises that will improve your life in and out of the water. Incorporate FT into your daily training. Start today!</p>
+                  </div>
+              </div>
+  
+              <!-- Online Consult: Coaches -->
+              <div class="column">
+                  <div class="box is-fullheight">
+                      <div class="columns">
+                          <div class="column">
+                              <h2 class="title is-4 has-text-centered mt-3 pt-3">Online Consult: Coaches</h2>
+                          </div>
+                      </div>
+                      <p class="has-text-weight-bold has-text-centered">Individual.</p>
+                      <p>Foundation Training can help your athletes reach and even exceed their current fitness and performance goals. This 30-minute consultation will introduce you to alignment and breathing practices that will help your athletes improve their times while reducing their risk for injury. Incorporate FT into your training program today!</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+  </body>
+
+ <!-- footer -->
+    <footer class="footer is-flex is-justify-content-center mt-2 p-1">
+      <div class="content has-text-centered" style="width: fit-content">
+        <p>
+          <b>Copyright &copy; 2025 True Line Fitness</b><br />
+          301 W Beltline Hwy Suite 103<br />
+          Madison, WI 53713 <br />
+          info@truelinefitness.com
+        </p>
+      </div>
+    </footer>
+    
+    <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+
+    <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-storage.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-firestore.js"></script>
+
+    <script>
+
+      const firebaseConfig = {
+  apiKey: "AIzaSyCyGS6x6RFv4Dfji9l7Qsu3Alu-lbC4p9s",
+  authDomain: "is424project-79c6d.firebaseapp.com",
+  projectId: "is424project-79c6d",
+  storageBucket: "is424project-79c6d.firebasestorage.app",
+  messagingSenderId: "934410753706",
+  appId: "1:934410753706:web:44f7002ad8f3ca7cfc22d3",
+  measurementId: "G-CD33DRZGRJ"
+};
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      // define authentication variable
+      let auth = firebase.auth();
+      let db = firebase.firestore();
+    </script>
+    <script src="app.js"></script>
