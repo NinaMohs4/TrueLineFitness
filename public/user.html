@@ -130,122 +130,165 @@
     ></div>
 
     <!-- main body w/ columns -->
+
     <section class="section">
-      <div class="container">
-          <h1 class="title has-text-centered">Choose Your Pass!</h1>
-          <p class="subtitle has-text-centered">Find one that works for you</p>
-  
-          <div class="columns is-multiline is-align-items-stretch">
-              <div class="column is-one-third">
-                  <div class="box is-fullheight">
-                      <div class="columns">
-                          <div class="column">
-                              <h2 class="title is-4 has-text-centered mt-3 pt-3">Private Session</h2>
-                          </div>
-                      </div>
-                      <h1 class=" title is-2 has-text-weight-bold has-text-centered">$95</h1>
-                      <p class="has-text-centered">1 Session tailored to you!<br>Online or In Studio</p>
-                      <br>
-                  </div>
-              </div>
-  
-              <div class="column is-one-third">
-                <div class="box is-fullheight has-background-info-light">
-                    <div class="columns">
-                        <div class="column">
-                            <h2 class="title is-4 has-text-centered mt-3 pt-3">First Class Free</h2>
-                        </div>
-                    </div>
-                    <h1 class=" title is-2 has-text-weight-bold has-text-centered">$0</h1>
-                    <p class="has-text-centered">For New Clients Only: first class free<br>Valid for One Month <br>Online or In Studio</p>
-                </div>
-            </div>
-
-  
-            <div class="column is-one-third">
-              <div class="box is-fullheight">
-                  <div class="columns">
-                      <div class="column">
-                          <h2 class="title is-4 has-text-centered mt-3 pt-3">Single Studio Class</h2>
-                      </div>
-                  </div>
-                  <h1 class=" title is-2 has-text-weight-bold has-text-centered">$22</h1>
-                  <p class="has-text-centered">One class at Studio Melt<br>Valid for one month<br>In Studio</p>
-              </div>
-          </div>
-          <div class="column is-one-third">
-            <div class="box is-fullheight has-background-info-light">
-                <div class="columns">
-                    <div class="column">
-                        <h2 class="title is-4 has-text-centered mt-3 pt-3">Single ONLINE Class</h2>
-                    </div>
-                </div>
-                <h1 class=" title is-2 has-text-weight-bold has-text-centered">$12</h1>
-                <p class="has-text-centered">Jump in. What have you got to lose?<br>Valid for one month<br>Buy a bundle and save!</p>
-            </div>
-        </div>
-        <div class="column is-one-third">
-          <div class="box is-fullheight ">
-              <div class="columns">
-                  <div class="column">
-                      <h2 class="title is-4 has-text-centered mt-3 pt-3">In Person Class x 5</h2>
-                  </div>
-              </div>
-              <h1 class=" title is-2 has-text-weight-bold has-text-centered">$100</h1>
-              <p class="has-text-centered">Five In Person Classes at Studio Melt<br>Valid for 6 months<br>In Studio</p>
-          </div>
-      </div>
-      <div class="column is-one-third">
-        <div class="box is-fullheight has-background-info-light">
-            <div class="columns">
-                <div class="column">
-                    <h2 class="title is-4 has-text-centered mt-3 pt-3">In Person Class x 10</h2>
-                </div>
-            </div>
-            <h1 class=" title is-2 has-text-weight-bold has-text-centered">$190</h1>
-            <p class="has-text-centered">Ten In Person Classes at Studio Melt<br>Valid for 12 months<br>In Studio</p>
-        </div>
-    </div>
-    <div class="column is-one-third">
-      <div class="box is-fullheight">
-          <div class="columns">
-              <div class="column">
-                  <h2 class="title is-4 has-text-centered mt-3 pt-3">5 Private Sessions</h2>
-              </div>
-          </div>
-          <h1 class=" title is-2 has-text-weight-bold has-text-centered">$450</h1>
-          <p class="has-text-centered">5 Sessions tailored to you!<br>Valid for 6 months<br>Online or In Studio</p>
-      </div>
-  </div>
-  <div class="column is-one-third">
-    <div class="box is-fullheight has-background-info-light">
-        <div class="columns">
-            <div class="column">
-                <h2 class="title is-4 has-text-centered mt-3 pt-3">10 Private Sessions</h2>
-            </div>
-        </div>
-        <h1 class=" title is-2 has-text-weight-bold has-text-centered">$850</h1>
-        <p class="has-text-centered">10 Sessions tailored to you!<br>Valid for 6 months<br>Online or In Studio</p>
-    </div>
-</div>
-<div class="column is-one-third">
-  <div class="box is-fullheight">
+        <div class="container">
+          <h1 class="title has-text-centered">Profile<i class="fa-water fa-lg"></i></h1>          
+    
+            <div class="columns is-flex is-align-items-stretch">
+<!-- Workshop Box -->
+<div class="column">
+    <div class="box is-fullheight">
       <div class="columns">
-          <div class="column">
-              <h2 class="title is-4 has-text-centered mt-3 pt-3">ONLINE x 5              </h2>
+        <div class="column">
+            <div class="has-background-info-light p-3">
+          <h2 class="title is-4 has-text-centered mt-3 pt-3 has-text-weight-bold has-text-info-dark">Book Classes</h2>
           </div>
+        </div>
       </div>
-      <h1 class=" title is-2 has-text-weight-bold has-text-centered">$57</h1>
-      <p class="has-text-centered">5 pack<br>Valid for 6 months<br>Save 5% on Online Classes!</p>
+  
+      <!-- Booking confirmation message -->
+      <div class="notification is-success is-light has-text-centered is-hidden" id="bookingMessage">
+        You have successfully booked a class!
+      </div>
+  
+      <!-- List of classes -->
+      <div class="p-4">
+        <div class="box mb-4">
+          <p class="has-text-weight-semibold">Yoga Flow</p>
+          <p class="has-text-grey">Monday, 10:00 AM</p>
+          <button class="button is-small has-background-info-dark has-text-white mt-2">Book It</button>
+        </div>
+  
+        <div class="box mb-4">
+          <p class="has-text-weight-semibold">HIIT Blast</p>
+          <p class="has-text-grey">Wednesday, 2:00 PM</p>
+          <button class="button is-small has-background-info-dark has-text-white mt-2">Book It</button>
+        </div>
+  
+        <div class="box mb-4">
+          <p class="has-text-weight-semibold">Pilates Core</p>
+          <p class="has-text-grey">Friday, 6:00 PM</p>
+          <button class="button is-small has-background-info-dark has-text-white mt-2">Book It</button>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+               
+  
+    
+                <!-- Online Consult: Athletes -->
+                <div class="column">
+                    <div class="box is-fullheight">
+                      <div class="columns">
+                        <div class="column">
+                            <div class="has-background-info-light p-3">
+                          <h2 class="title is-4 has-text-centered mt-3 pt-3 has-text-weight-bold has-text-info-dark">My Classes</h2>
+                        </div>
+                        </div>
+                      </div>
+                  
+                      <div class="table-container p-4">
+                        <table class="table is-fullwidth is-striped is-hoverable">
+                          <thead>
+                            <tr>
+                              <th>Class Name</th>
+                              <th>Date</th>
+                              <th>Time</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Yoga Flow</td>
+                              <td>2025-04-25</td>
+                              <td>10:00 AM</td>
+                              <td>
+                                <button class="button has-background-info-dark has-text-white">Delete</button>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>HIIT Session</td>
+                              <td>2025-04-26</td>
+                              <td>2:00 PM</td>
+                              <td>
+                                <button class="button has-background-info-dark has-text-white">Delete</button>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Pilates Core</td>
+                              <td>2025-04-27</td>
+                              <td>6:00 PM</td>
+                              <td>
+                                <button class="button has-background-info-dark has-text-white">Delete</button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+    
+                <!-- Online Consult: Coaches -->
+                <div class="column">
+                    <div class="box is-fullheight">
+                      <div class="columns">
+                        <div class="column">
+                            <div class="has-background-info-light p-3">
+                          <h2 class="title is-4 has-text-centered mt-3 pt-3 has-text-weight-bold has-text-info-dark">Leave A Review</h2>
+                        </div>
+                        </div>
+                      </div>
+                      <form class="p-4">
+                        <!-- Name -->
+                        <div class="field">
+                          <label class="label">Name</label>
+                          <div class="control">
+                            <input class="input" type="text" placeholder="Your name" name="name" required />
+                          </div>
+                        </div>
+                  
+                        <!-- Star Rating -->
+                        <div class="field">
+                          <label class="label">Rating</label>
+                          <div class="control">
+                            <label class="radio">
+                              <input type="radio" name="rating" value="1" /> 1
+                            </label>
+                            <label class="radio">
+                              <input type="radio" name="rating" value="2" /> 2
+                            </label>
+                            <label class="radio">
+                              <input type="radio" name="rating" value="3" /> 3
+                            </label>
+                            <label class="radio">
+                              <input type="radio" name="rating" value="4" /> 4
+                            </label>
+                            <label class="radio">
+                              <input type="radio" name="rating" value="5" /> 5
+                            </label>
+                          </div>
+                        </div>
+                  
+                        <!-- Comment -->
+                        <div class="field">
+                          <label class="label">Comment</label>
+                          <div class="control">
+                            <textarea class="textarea" name="comment" placeholder="Share your thoughts..." required></textarea>
+                          </div>
+                        </div>
+                  
+                        <!-- Submit -->
+                        <div class="field is-grouped is-justify-content-center">
+                          <div class="control">
+                            <button class="button has-background-info-dark has-text-white" type="submit">Submit Review</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+              </div>
 
-          </div>
-      </div>
-      <br>
-      <p class="has-text-centered">*Class Passes are for classes only. Workshops and other special events not included.
-      </p>
-  </section>
   </body>
 
  <!-- footer -->
