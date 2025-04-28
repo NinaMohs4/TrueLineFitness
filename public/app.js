@@ -155,7 +155,6 @@ auth.onAuthStateChanged((user) => {
   if (user) {
     configure_nav_bar(auth.currentUser.email);
     show_reviews(auth.currentUser.email);
-    renderOptions(options);
   } else {
     configure_nav_bar();
     show_reviews();
@@ -254,17 +253,6 @@ r_e("signup_form").addEventListener("submit", (e) => {
       console.error("Sign-up error:", err);
       configure_messages_bar("Error during sign-up");
     });
-});
-
-auth.onAuthStateChanged((user) => {
-  if (user) {
-    configure_nav_bar(auth.currentUser.email);
-    show_reviews(auth.currentUser.email);
-    renderOptions(options);
-  } else {
-    configure_nav_bar();
-    show_reviews();
-  }
 });
 
 // sign in
@@ -402,18 +390,6 @@ function loadContent(content) {
   document.querySelector("#dynamic_content").innerHTML = content;
 }
 
-// Toggle navbar menu visibility on small screens
-document.addEventListener("DOMContentLoaded", () => {
-  const navbarBurger = document.getElementById("navbarBurger");
-  const navbarMenu = document.getElementById("navbarMenu");
-
-  navbarBurger.addEventListener("click", () => {
-    // Toggle the "is-active" class on both the navbar burger and the menu
-    navbarBurger.classList.toggle("is-active");
-    navbarMenu.classList.toggle("is-active");
-  });
-});
-
 // Creating Users, Enrollment, Reviews, and Classes Collections
 let u1 = {
   user_id: 1,
@@ -447,3 +423,104 @@ db.collection("users").doc("u1").set(u1);
 //db.collection("enrollment").doc("e1").set(e1);
 //db.collection("reviews").doc("r1").set(r1);
 //db.collection("classes").doc("c1").set(c1);
+
+document.addEventListener("DOMContentLoaded", () => {
+  const navbarBurger = document.getElementById("navbarBurger");
+  const navbarMenu = document.getElementById("navbarMenu");
+
+  if (navbarBurger && navbarMenu) {
+    navbarBurger.addEventListener("click", () => {
+      navbarBurger.classList.toggle("is-active");
+      navbarMenu.classList.toggle("is-active");
+    });
+  }
+
+  const addClassModal = document.getElementById("addClassModal");
+  const addClassForm = document.getElementById("addClassForm");
+  const classesTableBody = document.querySelector("#classes_table tbody");
+
+  if (addClassForm && classesTableBody) {
+    // Load existing classes from Firestore when page loads
+    db.collection("classes")
+      .orderBy("timestamp", "asc")
+      .get()
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          const classData = doc.data();
+          const newRow = document.createElement("tr");
+          newRow.innerHTML = `
+            <td>${classData.class_name}</td>
+            <td>${classData.class_date}</td>
+            <td>${classData.class_time}</td>
+            <td><button class="button has-background-info-dark has-text-white" onclick="deleteClass('${doc.id}', this)">Delete</button></td>
+          `;
+          classesTableBody.appendChild(newRow);
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching classes:", error);
+      });
+
+    // When admin submits Add Class form
+    addClassForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const className = addClassForm
+        .querySelector('input[placeholder="e.g. Zumba"]')
+        .value.trim();
+      const classTime = addClassForm
+        .querySelector('input[placeholder="e.g. 5:00 PM"]')
+        .value.trim();
+      const classDate = addClassForm
+        .querySelector('input[placeholder="e.g. Thursday"]')
+        .value.trim();
+
+      if (className && classTime && classDate) {
+        db.collection("classes")
+          .add({
+            class_name: className,
+            class_time: classTime,
+            class_date: classDate,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          })
+          .then((docRef) => {
+            // Add the newly created class to the table immediately
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = `
+              <td>${className}</td>
+              <td>${classDate}</td>
+              <td>${classTime}</td>
+              <td><button class="button has-background-info-dark has-text-white" onclick="deleteClass('${docRef.id}', this)">Delete</button></td>
+            `;
+            classesTableBody.appendChild(newRow);
+
+            addClassForm.reset();
+            addClassModal.classList.remove("is-active");
+          })
+          .catch((error) => {
+            console.error("Error adding class:", error);
+          });
+      }
+    });
+  }
+});
+
+function deleteClass(docId, buttonElement) {
+  if (confirm("Are you sure you want to delete this class?")) {
+    db.collection("classes")
+      .doc(docId)
+      .delete()
+      .then(() => {
+        // Remove the table row from the DOM
+        const row = buttonElement.closest("tr");
+        if (row) {
+          row.remove();
+        }
+        configure_messages_bar("Class deleted successfully.");
+      })
+      .catch((error) => {
+        console.error("Error deleting class:", error);
+        configure_messages_bar("Failed to delete class.");
+      });
+  }
+}
