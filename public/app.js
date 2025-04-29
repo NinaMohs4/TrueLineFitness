@@ -840,47 +840,6 @@ document.addEventListener("DOMContentLoaded", () => {
           </h1>          
     
             <div class="columns is-flex is-align-items-stretch">
-<!-- Workshop Box -->
-<div class="column">
-    <div class="box is-fullheight">
-      <div class="columns">
-        <div class="column">
-            <div class="has-background-info-light p-3">
-          <h2 class="title is-4 has-text-centered mt-3 pt-3 has-text-weight-bold has-text-info-dark">Book Classes</h2>
-          </div>
-        </div>
-      </div>
-  
-      <!-- Booking confirmation message -->
-      <div class="notification is-success is-light has-text-centered is-hidden" id="bookingMessage">
-        You have successfully booked a class!
-      </div>
-  
-      <!-- List of classes -->
-      <div class="p-4">
-        <div class="box mb-4">
-          <p class="has-text-weight-semibold">Yoga Flow</p>
-          <p class="has-text-grey">Monday, 10:00 AM</p>
-          <button class="button is-small has-background-info-dark has-text-white mt-2">Book It</button>
-        </div>
-  
-        <div class="box mb-4">
-          <p class="has-text-weight-semibold">HIIT Blast</p>
-          <p class="has-text-grey">Wednesday, 2:00 PM</p>
-          <button class="button is-small has-background-info-dark has-text-white mt-2">Book It</button>
-        </div>
-  
-        <div class="box mb-4">
-          <p class="has-text-weight-semibold">Pilates Core</p>
-          <p class="has-text-grey">Friday, 6:00 PM</p>
-          <button class="button is-small has-background-info-dark has-text-white mt-2">Book It</button>
-        </div>
-      </div>
-    </div>
-  </div>
-               
-  
-    
                 <!-- Online Consult: Athletes -->
                 <div class="column">
                     <div class="box is-fullheight">
@@ -1008,6 +967,41 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     </footer>
       `);
+    setTimeout(() => {
+      if (r_e("review_form")) {
+        r_e("review_form").addEventListener("submit", (e) => {
+          e.preventDefault();
+          const name = r_e("review_name").value.trim();
+          const rating = document.querySelector(
+            'input[name="rating"]:checked'
+          )?.value;
+          const desc = r_e("fitness_review").value.trim();
+
+          if (!auth.currentUser) {
+            configure_messages_bar("You must be signed in to leave a review.");
+            return;
+          }
+
+          db.collection("reviews")
+            .add({
+              name: name,
+              rating: rating,
+              desc: desc,
+              email: auth.currentUser.email,
+            })
+            .then(() => {
+              configure_messages_bar("Review submitted successfully!");
+              r_e("review_form").reset();
+              show_reviews();
+            })
+            .catch((error) => {
+              configure_messages_bar(
+                "Error submitting review: " + error.message
+              );
+            });
+        });
+      }
+    }, 300); // slight delay to ensure DOM is ready
   });
 });
 
