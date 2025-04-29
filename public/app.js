@@ -212,25 +212,32 @@ function show_reviews(email) {
 }
 
 // Search reviews function
-function search_reviews(field, val) {
+function search_reviews(field, searchTerm) {
   db.collection("reviews")
-    .where(field, "==", val)
     .get()
     .then((snapshot) => {
       let html = "";
       if (snapshot.empty) {
-        html = "<p>No reviews matched your search.</p>";
+        html = "<p>No reviews found.</p>";
       } else {
         snapshot.forEach((doc) => {
           const data = doc.data();
-          html += `
-            <div class="box">
-              <p><strong>Name:</strong> ${data.name}</p>
-              <p><strong>Rating:</strong> ${data.rating}</p>
-              <p><strong>Review:</strong> ${data.desc}</p>
-            </div>
-          `;
+          if (
+            data[field] &&
+            data[field].toLowerCase().includes(searchTerm.toLowerCase())
+          ) {
+            html += `
+              <div class="box">
+                <p><strong>Name:</strong> ${data.name}</p>
+                <p><strong>Rating:</strong> ${data.rating}</p>
+                <p><strong>Review:</strong> ${data.desc}</p>
+              </div>
+            `;
+          }
         });
+      }
+      if (html === "") {
+        html = "<p>No reviews matched your search.</p>";
       }
       if (r_e("r_col")) {
         r_e("r_col").innerHTML = html;
