@@ -635,6 +635,382 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  r_e("admin-link").addEventListener("click", (event) => {
+    event.preventDefault();
+    loadContent(`
+      <div id="admin">
+    <section class="section">
+      <div class="container">
+        <h1 class="title has-text-centered">
+          Profile <i class="fa-regular fa-user"></i>
+        </h1>
+        <div class="columns is-flex is-align-items-stretch">
+          <!-- My Classes Box -->
+          <div class="column">
+            <div class="box is-fullheight">
+              <div class="has-background-info-light p-3">
+                <h2
+                  class="title is-4 has-text-centered has-text-weight-bold has-text-info-dark"
+                >
+                  Classes
+                </h2>
+              </div>
+              <div class="table-container p-4">
+                <table
+                  id="classes_table"
+                  class="table is-fullwidth is-striped is-hoverable"
+                >
+                  <thead>
+                    <tr>
+                      <th>Class Name</th>
+                      <th>Date</th>
+                      <th>Time</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Yoga Flow</td>
+                      <td>2025-04-25</td>
+                      <td>10:00 AM</td>
+                      <td>
+                        <button
+                          class="button has-background-info-dark has-text-white"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>HIIT Session</td>
+                      <td>2025-04-26</td>
+                      <td>2:00 PM</td>
+                      <td>
+                        <button
+                          class="button has-background-info-dark has-text-white"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Pilates Core</td>
+                      <td>2025-04-27</td>
+                      <td>6:00 PM</td>
+                      <td>
+                        <button
+                          class="button has-background-info-dark has-text-white"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="has-text-centered mt-4">
+                <button
+                  class="button has-background-info-dark has-text-white"
+                  onclick="document.getElementById('addClassModal').classList.add('is-active')"
+                >
+                  Add Class
+                </button>
+              </div>
+
+<!-- Add Class Modal -->
+<div id="addClassModal" class="modal">
+  <div class="modal-background" onclick="document.getElementById('addClassModal').classList.remove('is-active')"></div>
+  <div class="modal-content box">
+    <h2 class="title is-4 has-text-centered">Add New Class</h2>
+    <form id="addClassForm">
+      <div class="field">
+        <label class="label">Class Name</label>
+        <div class="control">
+          <input class="input" type="text" placeholder="e.g. Zumba" required />
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Time</label>
+        <div class="control">
+          <input class="input" type="text" placeholder="e.g. 5:00 PM" required />
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Date</label>
+        <div class="control">
+          <input class="input" type="text" placeholder="e.g. Thursday" required />
+        </div>
+      </div>
+      <div class="field is-grouped is-justify-content-center">
+        <div class="control">
+          <button type="submit" class="button has-background-info-dark has-text-white">Add</button>
+        </div>
+        <div class="control">
+          <button type="button" class="button is-light" onclick="document.getElementById('addClassModal').classList.remove('is-active')">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+
+          <!-- Registered Users Box -->
+          <div class="column">
+            <div class="box is-fullheight">
+              <div class="has-background-info-light p-3">
+                <h2
+                  class="title is-4 has-text-centered has-text-weight-bold has-text-info-dark"
+                >
+                  Registered Users
+                </h2>
+              </div>
+              <div class="table-container p-4">
+                <table class="table is-fullwidth is-striped is-hoverable">
+                  <thead>
+                    <tr>
+                      <th>Email</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>user1@example.com</td>
+                      <td>
+                        <button
+                          class="button has-background-info-dark has-text-white"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>user2@example.com</td>
+                      <td>
+                        <button
+                          class="button has-background-info-dark has-text-white"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>admin@example.com</td>
+                      <td>
+                        <button
+                          class="button has-background-info-dark has-text-white"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer is-flex is-justify-content-center mt-2 p-1">
+      <div class="content has-text-centered" style="width: fit-content">
+        <p>
+          <b>Copyright &copy; 2025 True Line Fitness</b><br />
+          301 W Beltline Hwy Suite 103<br />
+          Madison, WI 53713 <br />
+          info@truelinefitness.com
+        </p>
+      </div>
+    </footer>
+      `);
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  r_e("user-link").addEventListener("click", (event) => {
+    event.preventDefault();
+    loadContent(`
+      <div id="user">
+    <section class="section">
+        <div class="container">
+          <h1 class="title has-text-centered">Profile <i class="fa-regular fa-user "></i>
+          </h1>          
+    
+            <div class="columns is-flex is-align-items-stretch">
+<!-- Workshop Box -->
+<div class="column">
+    <div class="box is-fullheight">
+      <div class="columns">
+        <div class="column">
+            <div class="has-background-info-light p-3">
+          <h2 class="title is-4 has-text-centered mt-3 pt-3 has-text-weight-bold has-text-info-dark">Book Classes</h2>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Booking confirmation message -->
+      <div class="notification is-success is-light has-text-centered is-hidden" id="bookingMessage">
+        You have successfully booked a class!
+      </div>
+  
+      <!-- List of classes -->
+      <div class="p-4">
+        <div class="box mb-4">
+          <p class="has-text-weight-semibold">Yoga Flow</p>
+          <p class="has-text-grey">Monday, 10:00 AM</p>
+          <button class="button is-small has-background-info-dark has-text-white mt-2">Book It</button>
+        </div>
+  
+        <div class="box mb-4">
+          <p class="has-text-weight-semibold">HIIT Blast</p>
+          <p class="has-text-grey">Wednesday, 2:00 PM</p>
+          <button class="button is-small has-background-info-dark has-text-white mt-2">Book It</button>
+        </div>
+  
+        <div class="box mb-4">
+          <p class="has-text-weight-semibold">Pilates Core</p>
+          <p class="has-text-grey">Friday, 6:00 PM</p>
+          <button class="button is-small has-background-info-dark has-text-white mt-2">Book It</button>
+        </div>
+      </div>
+    </div>
+  </div>
+               
+  
+    
+                <!-- Online Consult: Athletes -->
+                <div class="column">
+                    <div class="box is-fullheight">
+                      <div class="columns">
+                        <div class="column">
+                            <div class="has-background-info-light p-3">
+                          <h2 class="title is-4 has-text-centered mt-3 pt-3 has-text-weight-bold has-text-info-dark">My Classes</h2>
+                        </div>
+                        </div>
+                      </div>
+                  
+                      <div class="table-container p-4">
+                        <table class="table is-fullwidth is-striped is-hoverable">
+                          <thead>
+                            <tr>
+                              <th>Class Name</th>
+                              <th>Date</th>
+                              <th>Time</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Yoga Flow</td>
+                              <td>2025-04-25</td>
+                              <td>10:00 AM</td>
+                              <td>
+                                <button class="button has-background-info-dark has-text-white">Delete</button>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>HIIT Session</td>
+                              <td>2025-04-26</td>
+                              <td>2:00 PM</td>
+                              <td>
+                                <button class="button has-background-info-dark has-text-white">Delete</button>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Pilates Core</td>
+                              <td>2025-04-27</td>
+                              <td>6:00 PM</td>
+                              <td>
+                                <button class="button has-background-info-dark has-text-white">Delete</button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+    
+                <!-- Online Consult: Coaches -->
+                <div class="column">
+                    <div class="box is-fullheight">
+                      <div class="columns">
+                        <div class="column">
+                            <div class="has-background-info-light p-3">
+                          <h2 class="title is-4 has-text-centered mt-3 pt-3 has-text-weight-bold has-text-info-dark">Leave A Review</h2>
+                        </div>
+                        </div>
+                      </div>
+                      <form class="p-4" id="review_form">
+                        <!-- Name -->
+                        <div class="field">
+                          <label class="label">Name</label>
+                          <div class="control">
+                            <input class="input" type="text" placeholder="Your name" name="name" required id="review_name" />
+                          </div>
+                        </div>
+                  
+                        <!-- Star Rating -->
+                        <div class="field">
+                          <label class="label">Rating</label>
+                          <div class="control">
+                            <label class="radio">
+                              <input type="radio" name="rating" value="1" id="review_rating" /> 1
+                            </label>
+                            <label class="radio">
+                              <input type="radio" name="rating" value="2" id="review_rating"/> 2
+                            </label>
+                            <label class="radio">
+                              <input type="radio" name="rating" value="3" id="review_rating"/> 3
+                            </label>
+                            <label class="radio">
+                              <input type="radio" name="rating" value="4" id="review_rating"/> 4
+                            </label>
+                            <label class="radio">
+                              <input type="radio" name="rating" value="5" id="review_rating"/> 5
+                            </label>
+                          </div>
+                        </div>
+                  
+                        <!-- Comment -->
+                        <div class="field">
+                          <label class="label">Comment</label>
+                          <div class="control">
+                            <textarea class="textarea" name="comment" placeholder="Share your thoughts..." required id="fitness_review"></textarea>
+                          </div>
+                        </div>
+                  
+                        <!-- Submit -->
+                        <div class="field is-grouped is-justify-content-center">
+                          <div class="control">
+                            <button class="button has-background-info-dark has-text-white" type="submit">Submit Review</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+              </div>
+            </div>
+
+  </body>
+
+ <!-- footer -->
+    <footer class="footer is-flex is-justify-content-center mt-2 p-1">
+      <div class="content has-text-centered" style="width: fit-content">
+        <p>
+          <b>Copyright &copy; 2025 True Line Fitness</b><br />
+          301 W Beltline Hwy Suite 103<br />
+          Madison, WI 53713 <br />
+          info@truelinefitness.com
+        </p>
+      </div>
+    </footer>
+      `);
+  });
+});
+
 function loadContent(content) {
   document.querySelector("#main").innerHTML = content;
 }
