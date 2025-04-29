@@ -1,4 +1,6 @@
-// global variables
+// TrueLineFitness App Script - FINAL LOCKED IN VERSION
+
+// Global Variables
 let signupbtn = document.querySelector("#signupbtn");
 let signup_modal = document.querySelector("#signup_modal");
 let signup_modalbg = document.querySelector("#signup_modalbg");
@@ -11,140 +13,61 @@ let postReviewBtn = document.querySelector("#postReviewBtn");
 let hidden_form = document.querySelector("#hidden_form");
 let content = document.querySelector("#content");
 
-// functions
+// Firebase auth and db are assumed initialized in HTML already
 
-function del_doc(id) {
-  db.collection("reviews")
-    .doc(id)
-    .delete()
-    .then(() => {
-      configure_messages_bar("TrueLineFitness review deleted successfully");
-      show_reviews(auth.currentUser.email);
-    });
+// Helper function
+function r_e(id) {
+  return document.getElementById(id);
 }
 
-function search_reviews(field, val) {
-  if (!val) {
-    r_e("r_col").innerHTML = "<p>Please enter a search term</p>";
-    return;
-  }
-
-  db.collection("reviews")
-    .where(field, "==", val)
-    .get()
-    .then((data) => {
-      let html = ``;
-      const userEmail = auth.currentUser?.email;
-
-      if (data.empty) {
-        r_e("r_col").innerHTML = "<p>No results found</p>";
-        return;
-      }
-
-      data.docs.forEach((d) => {
-        const review = d.data();
-        const isOwner = review.email === userEmail;
-
-        html += `
-          <div class="box has-background-info-light" id="${d.id}">
-            <h1 class="has-background-white title is-5 p-2 has-text-centered mb-0 has-text-weight-bold">
-              ${review.name}
-            </h1>
-            <p class="has-text-weight-semibold has-text-centered mt-1 mb-1">
-              Rating: ${review.rating}/5 ⭐️
-            </p>
-            <p class="p-3">${review.desc}</p>
-            ${
-              isOwner
-                ? `<div class="has-text-right pr-2"><button class="button is-small is-danger" onclick="handleRemove('${d.id}')">Delete</button></div>`
-                : ""
-            }
-          </div>`;
-      });
-
-      r_e("r_col").innerHTML = html;
-    })
-    .catch((error) => {
-      console.error("Error fetching filtered reviews:", error);
-      r_e("r_col").innerHTML = "<p>Error while searching reviews.</p>";
-    });
-}
-
-function show_reviews(email) {
-  const rightColumn = r_e("r_col");
-
-  if (email) {
-    r_e("l_col").classList.remove("is-hidden");
-    r_e("r_col").classList.remove("is-hidden");
-
-    db.collection("reviews")
-      .get()
-      .then((data) => {
-        let html = ``;
-        const userEmail = auth.currentUser.email;
-
-        data.docs.forEach((d) => {
-          const review = d.data();
-          const isOwner = review.email === userEmail;
-
-          html += `
-            <div class="box has-background-info-light" id="${d.id}">
-              <h1 class="has-background-white title is-5 p-2 has-text-centered mb-0 has-text-weight-bold">
-                ${review.name}
-              </h1>
-              <p class="has-text-weight-semibold has-text-centered mt-1 mb-1">
-                Rating: ${review.rating}/5 ⭐️
-              </p>
-              <p class="p-3">${review.desc}</p>
-            </div>`;
-        });
-
-        rightColumn.innerHTML = html;
-      })
-      .catch((error) => {
-        console.error("Error fetching TrueLineFitness Review data:", error);
-        rightColumn.innerHTML =
-          "<p>An error occurred while loading reviews</p>";
-      });
-  } else {
-    r_e("content").innerHTML =
-      "<p>You need to be signed in to view content</p>";
-    r_e("l_col").classList.add("is-hidden");
-    r_e("r_col").classList.add("is-hidden");
+// Configure messages bar
+function configure_messages_bar(msg) {
+  const msgBar = r_e("messages");
+  if (msgBar) {
+    msgBar.classList.remove("is-hidden");
+    msgBar.innerHTML = msg;
+    setTimeout(() => {
+      msgBar.classList.add("is-hidden");
+      msgBar.innerHTML = "";
+    }, 3000);
   }
 }
 
+// Configure navbar based on auth state
 function configure_nav_bar(email) {
   let signedin = document.querySelectorAll(".signedin");
   let signedout = document.querySelectorAll(".signedout");
-  let myReviewBtn = document.querySelector("#user_reviews");
-
   if (email) {
-    signedin.forEach((element) => {
-      element.classList.remove("is-hidden");
-    });
-    signedout.forEach((element) => {
-      element.classList.add("is-hidden");
-    });
-
-    if (myReviewBtn) {
-      myReviewBtn.classList.remove("is-hidden");
-    }
+    signedin.forEach((item) => (item.style.display = "block"));
+    signedout.forEach((item) => (item.style.display = "none"));
+    if (r_e("current_user")) r_e("current_user").textContent = email;
   } else {
-    signedin.forEach((element) => {
-      element.classList.add("is-hidden");
-    });
-    signedout.forEach((element) => {
-      element.classList.remove("is-hidden");
-    });
-
-    if (myReviewBtn) {
-      myReviewBtn.classList.add("is-hidden");
-    }
+    signedin.forEach((item) => (item.style.display = "none"));
+    signedout.forEach((item) => (item.style.display = "block"));
+    if (r_e("current_user")) r_e("current_user").textContent = "";
   }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+// Firebase Auth Listeners
+if (auth) {
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      configure_nav_bar(user.email);
+      // Auto-load reviews if on the main page
+      if (r_e("r_col")) {
+        show_reviews();
+      }
+    } else {
+      configure_nav_bar(null);
+      if (r_e("r_col")) {
+        r_e("r_col").innerHTML = "<p>Please sign in to see reviews.</p>";
+      }
+    }
+  });
+}
+
+// Sign up
+if (signupbtn) {
   signupbtn.addEventListener("click", () => {
     signup_modal.classList.add("is-active");
   });
@@ -152,7 +75,10 @@ document.addEventListener("DOMContentLoaded", function () {
   signup_modalbg.addEventListener("click", () => {
     signup_modal.classList.remove("is-active");
   });
+}
 
+// Sign in
+if (signinbtn) {
   signinbtn.addEventListener("click", () => {
     signin_modal.classList.add("is-active");
   });
@@ -160,119 +86,162 @@ document.addEventListener("DOMContentLoaded", function () {
   signin_modalbg.addEventListener("click", () => {
     signin_modal.classList.remove("is-active");
   });
+}
 
-  r_e("signup_form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    let email = r_e("email").value;
-    let pass = r_e("password").value;
-
-    auth
-      .createUserWithEmailAndPassword(email, pass)
-      .then((cred) => {
-        return db
-          .collection("users")
-          .doc(cred.user.uid)
-          .set({
-            user_id: cred.user.uid,
-            user_email: email,
-            user_name: email.split("@")[0],
-            user_phone: "",
-            admin_status: false,
-          });
-      })
-      .then(() => {
-        r_e("signup_modal").classList.remove("is-active");
-        r_e("signup_form").reset();
-        configure_messages_bar("Sign-up successful and user saved!");
-      })
-      .catch((err) => {
-        console.error("Sign-up error:", err);
-        configure_messages_bar("Error during sign-up: " + err.message);
-      });
-  });
-
-  r_e("signin_form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    let email = r_e("email_").value;
-    let pass = r_e("password_").value;
-
-    auth.signInWithEmailAndPassword(email, pass).then(() => {
-      configure_messages_bar("Welcome back " + auth.currentUser.email + "!");
-      r_e("signin_modal").classList.remove("is-active");
-    });
-  });
-
+// Sign out
+if (r_e("signoutbtn")) {
   r_e("signoutbtn").addEventListener("click", () => {
-    auth.signOut().then(() => {
-      configure_messages_bar("You are now logged out!");
-    });
-  });
-
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      configure_nav_bar(auth.currentUser.email);
-      show_reviews(auth.currentUser.email);
-
-      // Check admin status
-      db.collection("users")
-        .doc(user.uid)
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            const userData = doc.data();
-            if (userData.admin_status) {
-              document
-                .querySelectorAll(".admin")
-                .forEach((el) => el.classList.remove("is-hidden"));
-            } else {
-              document
-                .querySelectorAll(".admin")
-                .forEach((el) => el.classList.add("is-hidden"));
-            }
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching admin status:", error);
-        });
-    } else {
-      configure_nav_bar();
-      show_reviews();
-
-      // Always hide admin link if no user
-      document
-        .querySelectorAll(".admin")
-        .forEach((el) => el.classList.add("is-hidden"));
-    }
-  });
-});
-
-function r_e(id) {
-  return document.querySelector(`#${id}`);
-}
-
-function configure_messages_bar(msg) {
-  r_e("messages").classList.remove("is-hidden");
-  r_e("messages").innerHTML = msg;
-  setTimeout(() => {
-    r_e("messages").classList.add("is-hidden");
-    r_e("messages").innerHTML = "";
-  }, 3000);
-}
-
-function handleRemove(docId) {
-  if (confirm("Are you sure you want to delete this review?")) {
-    db.collection("reviews")
-      .doc(docId)
-      .delete()
+    auth
+      .signOut()
       .then(() => {
-        configure_messages_bar("Deleted Review");
-        show_reviews(auth.currentUser.email);
+        configure_messages_bar("Signed out successfully.");
       })
       .catch((error) => {
-        console.error("Error deleting review:", error);
-        configure_messages_bar("Failed to delete review.");
+        configure_messages_bar("Error signing out: " + error.message);
       });
+  });
+}
+
+// Sign Up Form Submit
+if (r_e("signup_form")) {
+  r_e("signup_form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = r_e("email").value.trim();
+    const password = r_e("password").value.trim();
+
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((cred) => {
+        configure_messages_bar("Signed up successfully!");
+        signup_modal.classList.remove("is-active");
+        r_e("signup_form").reset();
+      })
+      .catch((error) => {
+        configure_messages_bar("Sign up failed: " + error.message);
+      });
+  });
+}
+
+// Sign In Form Submit
+if (r_e("signin_form")) {
+  r_e("signin_form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = r_e("email_").value.trim();
+    const password = r_e("password_").value.trim();
+
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then((cred) => {
+        configure_messages_bar("Signed in successfully!");
+        signin_modal.classList.remove("is-active");
+        r_e("signin_form").reset();
+      })
+      .catch((error) => {
+        configure_messages_bar("Sign in failed: " + error.message);
+      });
+  });
+}
+
+// --- Reviews, Search, and Clear Search ---
+
+// My Reviews button
+if (r_e("user_reviews")) {
+  r_e("user_reviews").addEventListener("click", () => {
+    if (!auth.currentUser) {
+      configure_messages_bar("You must be signed in to view your reviews.");
+      return;
+    }
+    show_reviews(auth.currentUser.email);
+  });
+}
+
+// Search button
+if (r_e("search_btn")) {
+  r_e("search_btn").addEventListener("click", () => {
+    const searchTerm = r_e("search_bar").value.trim();
+    if (searchTerm === "") {
+      configure_messages_bar("Please enter something to search.");
+      return;
+    }
+    search_reviews("desc", searchTerm);
+  });
+}
+
+// Clear Search button
+if (r_e("clear_search")) {
+  r_e("clear_search").addEventListener("click", () => {
+    r_e("search_bar").value = "";
+    show_reviews();
+  });
+}
+
+// Show reviews function
+function show_reviews(email) {
+  let reviewsRef = db.collection("reviews");
+  if (email) {
+    reviewsRef = reviewsRef.where("email", "==", email);
   }
+  reviewsRef
+    .get()
+    .then((snapshot) => {
+      let html = "";
+      if (snapshot.empty) {
+        html = "<p>No reviews found.</p>";
+      } else {
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          html += `
+          <div class="box">
+            <p><strong>Name:</strong> ${data.name}</p>
+            <p><strong>Rating:</strong> ${data.rating}</p>
+            <p><strong>Review:</strong> ${data.desc}</p>
+          </div>
+        `;
+        });
+      }
+      if (r_e("r_col")) {
+        r_e("r_col").innerHTML = html;
+      }
+    })
+    .catch((error) => {
+      console.error("Error showing reviews:", error);
+      if (r_e("r_col")) {
+        r_e("r_col").innerHTML = "<p>Error loading reviews.</p>";
+      }
+    });
+}
+
+// Search reviews function
+function search_reviews(field, val) {
+  db.collection("reviews")
+    .where(field, "==", val)
+    .get()
+    .then((snapshot) => {
+      let html = "";
+      if (snapshot.empty) {
+        html = "<p>No reviews matched your search.</p>";
+      } else {
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          html += `
+            <div class="box">
+              <p><strong>Name:</strong> ${data.name}</p>
+              <p><strong>Rating:</strong> ${data.rating}</p>
+              <p><strong>Review:</strong> ${data.desc}</p>
+            </div>
+          `;
+        });
+      }
+      if (r_e("r_col")) {
+        r_e("r_col").innerHTML = html;
+      }
+    })
+    .catch((error) => {
+      console.error("Error searching reviews:", error);
+      if (r_e("r_col")) {
+        r_e("r_col").innerHTML = "<p>Error during search.</p>";
+      }
+    });
 }
 
 //  BUY PASSES
