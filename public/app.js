@@ -36,7 +36,7 @@ function configure_nav_bar(email) {
   let signedin = document.querySelectorAll(".signedin");
   let signedout = document.querySelectorAll(".signedout");
   if (email) {
-    signedin.forEach((item) => (item.style.display = "block"));
+    signedin.forEach((item) => (item.style.display = "flex"));
     signedout.forEach((item) => (item.style.display = "none"));
     if (r_e("current_user")) r_e("current_user").textContent = email;
   } else {
@@ -1008,3 +1008,18 @@ document.addEventListener("DOMContentLoaded", () => {
 function loadContent(content) {
   document.querySelector("#main").innerHTML = content;
 }
+
+auth.onAuthStateChanged((user) => {
+  const signedInElements = document.querySelectorAll(".signedin");
+  const signedOutElements = document.querySelectorAll(".signedout");
+
+  if (user) {
+    // Show signed-in UI
+    signedInElements.forEach((el) => (el.style.display = "flex"));
+    signedOutElements.forEach((el) => (el.style.display = "none"));
+  } else {
+    // Show signed-out UI
+    signedInElements.forEach((el) => (el.style.display = "none"));
+    signedOutElements.forEach((el) => (el.style.display = "flex"));
+  }
+});
