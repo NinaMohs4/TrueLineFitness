@@ -1,5 +1,3 @@
-// TrueLineFitness App Script - FINAL LOCKED IN VERSION
-
 // Global Variables
 let signupbtn = document.querySelector("#signupbtn");
 let signup_modal = document.querySelector("#signup_modal");
