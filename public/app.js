@@ -249,6 +249,38 @@ function search_reviews(field, searchTerm) {
     });
 }
 
+if (r_e("review_form")) {
+  r_e("review_form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = r_e("review_name").value.trim();
+    const rating = document.querySelector(
+      'input[name="rating"]:checked'
+    )?.value;
+    const desc = r_e("fitness_review").value.trim();
+
+    if (!auth.currentUser) {
+      configure_messages_bar("You must be signed in to leave a review.");
+      return;
+    }
+
+    db.collection("reviews")
+      .add({
+        name: name,
+        rating: rating,
+        desc: desc,
+        email: auth.currentUser.email,
+      })
+      .then(() => {
+        configure_messages_bar("Review submitted successfully!");
+        r_e("review_form").reset();
+        show_reviews();
+      })
+      .catch((error) => {
+        configure_messages_bar("Error submitting review: " + error.message);
+      });
+  });
+}
+
 //  BUY PASSES
 document.addEventListener("DOMContentLoaded", () => {
   r_e("passes-link").addEventListener("click", (event) => {

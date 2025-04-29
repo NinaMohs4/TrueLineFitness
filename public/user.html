@@ -240,12 +240,12 @@
                         </div>
                         </div>
                       </div>
-                      <form class="p-4">
+                      <form class="p-4" id="review_form">
                         <!-- Name -->
                         <div class="field">
                           <label class="label">Name</label>
                           <div class="control">
-                            <input class="input" type="text" placeholder="Your name" name="name" required />
+                            <input class="input" type="text" placeholder="Your name" name="name" required id="review_name" />
                           </div>
                         </div>
                   
@@ -254,19 +254,19 @@
                           <label class="label">Rating</label>
                           <div class="control">
                             <label class="radio">
-                              <input type="radio" name="rating" value="1" /> 1
+                              <input type="radio" name="rating" value="1" id="review_rating" /> 1
                             </label>
                             <label class="radio">
-                              <input type="radio" name="rating" value="2" /> 2
+                              <input type="radio" name="rating" value="2" id="review_rating"/> 2
                             </label>
                             <label class="radio">
-                              <input type="radio" name="rating" value="3" /> 3
+                              <input type="radio" name="rating" value="3" id="review_rating"/> 3
                             </label>
                             <label class="radio">
-                              <input type="radio" name="rating" value="4" /> 4
+                              <input type="radio" name="rating" value="4" id="review_rating"/> 4
                             </label>
                             <label class="radio">
-                              <input type="radio" name="rating" value="5" /> 5
+                              <input type="radio" name="rating" value="5" id="review_rating"/> 5
                             </label>
                           </div>
                         </div>
@@ -275,7 +275,7 @@
                         <div class="field">
                           <label class="label">Comment</label>
                           <div class="control">
-                            <textarea class="textarea" name="comment" placeholder="Share your thoughts..." required></textarea>
+                            <textarea class="textarea" name="comment" placeholder="Share your thoughts..." required id="fitness_review"></textarea>
                           </div>
                         </div>
                   
