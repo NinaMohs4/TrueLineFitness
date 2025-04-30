@@ -403,6 +403,181 @@ function show_users() {
     });
 }
 
+function loadUserClassesTable() {
+  const tableBody = document.querySelector("#user_classes_table_body");
+  if (!auth.currentUser || !tableBody) return;
+
+  db.collection("classes")
+    .orderBy("class_date")
+    .get()
+    .then((snapshot) => {
+      let html = "";
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const isEnrolled = data.enrollment.includes(auth.currentUser.email);
+        const dateStr = data.class_date.toDate().toLocaleDateString();
+
+        html += `
+          <tr>
+            <td>${data.class_name}</td>
+            <td>${dateStr}</td>
+            <td>${data.class_time}</td>
+            <td>${data.instructor || "—"}</td>
+            <td>
+              <button class="button ${
+                isEnrolled ? "is-danger" : "is-success"
+              } enroll-btn" 
+                      data-id="${doc.id}" data-action="${
+          isEnrolled ? "leave" : "join"
+        }">
+                ${isEnrolled ? "Leave" : "Join"}
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      tableBody.innerHTML = html;
+      attachEnrollListeners();
+    })
+    .catch((err) => {
+      console.error("Error loading classes for user:", err);
+      tableBody.innerHTML = `<tr><td colspan='5'>Error loading classes.</td></tr>`;
+    });
+}
+
+function attachEnrollListeners() {
+  const buttons = document.querySelectorAll(".enroll-btn");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const classId = btn.getAttribute("data-id");
+      const action = btn.getAttribute("data-action");
+      const userEmail = auth.currentUser?.email;
+
+      if (!userEmail) {
+        configure_messages_bar("You must be signed in to perform this action.");
+        return;
+      }
+
+      const classRef = db.collection("classes").doc(classId);
+
+      const updateData =
+        action === "join"
+          ? { enrollment: firebase.firestore.FieldValue.arrayUnion(userEmail) }
+          : {
+              enrollment: firebase.firestore.FieldValue.arrayRemove(userEmail),
+            };
+
+      classRef
+        .update(updateData)
+        .then(() => {
+          configure_messages_bar(`Successfully ${action}ed the class.`);
+          loadUserClassesTable(); // or refresh UI if needed
+        })
+        .catch((err) => {
+          console.error("Error updating enrollment:", err);
+          configure_messages_bar("Error updating enrollment.");
+        });
+    });
+  });
+}
+
+if (document.getElementById("addClassForm")) {
+  document.getElementById("addClassForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const name = form
+      .querySelector('input[placeholder="e.g. Zumba"]')
+      .value.trim();
+    const time = form
+      .querySelector('input[placeholder="e.g. 5:00 PM"]')
+      .value.trim();
+    const date = form
+      .querySelector('input[placeholder="e.g. Thursday"]')
+      .value.trim();
+
+    db.collection("classes")
+      .add({
+        class_name: name,
+        class_time: time,
+        class_date: firebase.firestore.Timestamp.fromDate(new Date(date)),
+        instructor: form.querySelector("#new_class_instructor").value.trim(),
+        enrollment: [],
+      })
+      .then(() => {
+        configure_messages_bar("Class added successfully!");
+        document.getElementById("addClassModal").classList.remove("is-active");
+        form.reset();
+        loadClassesIntoTable(); // reload classes
+      })
+      .catch((err) => {
+        configure_messages_bar("Error adding class: " + err.message);
+        console.error(err);
+      });
+  });
+}
+
+function loadClassesIntoTable() {
+  const classesRef = db.collection("classes").orderBy("class_date");
+
+  classesRef.get().then((snapshot) => {
+    let html = "";
+    if (snapshot.empty) {
+      html = "<tr><td colspan='5'>No classes found.</td></tr>";
+    } else {
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const dateStr =
+          data.class_date && data.class_date.toDate
+            ? data.class_date.toDate().toLocaleDateString()
+            : "—";
+
+        html += `
+          <tr>
+            <td>${data.class_name}</td>
+            <td>${dateStr}</td>
+            <td>${data.class_time}</td>
+            <td>${data.instructor || "—"}</td>
+            <td>
+              <button class="button has-background-info-dark has-text-white delete-class-btn" data-id="${
+                doc.id
+              }">
+                Delete
+              </button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    const tableBody = document.getElementById("classes_table_body");
+    if (tableBody) {
+      tableBody.innerHTML = html;
+      attachDeleteClassListeners();
+    }
+  });
+}
+
+function attachDeleteClassListeners() {
+  const buttons = document.querySelectorAll(".delete-class-btn");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      if (confirm("Are you sure you want to delete this class?")) {
+        db.collection("classes")
+          .doc(id)
+          .delete()
+          .then(() => {
+            configure_messages_bar("Class deleted.");
+            loadClassesIntoTable();
+          })
+          .catch((err) => {
+            configure_messages_bar("Error deleting class.");
+            console.error(err);
+          });
+      }
+    });
+  });
+}
+
 //  BUY PASSES
 document.addEventListener("DOMContentLoaded", () => {
   r_e("passes-link").addEventListener("click", (event) => {
@@ -788,46 +963,11 @@ document.addEventListener("DOMContentLoaded", () => {
                       <th>Class Name</th>
                       <th>Date</th>
                       <th>Time</th>
+                      <th>Instructor</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>Yoga Flow</td>
-                      <td>2025-04-25</td>
-                      <td>10:00 AM</td>
-                      <td>
-                        <button
-                          class="button has-background-info-dark has-text-white"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>HIIT Session</td>
-                      <td>2025-04-26</td>
-                      <td>2:00 PM</td>
-                      <td>
-                        <button
-                          class="button has-background-info-dark has-text-white"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Pilates Core</td>
-                      <td>2025-04-27</td>
-                      <td>6:00 PM</td>
-                      <td>
-                        <button
-                          class="button has-background-info-dark has-text-white"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
+                  <tbody id="classes_table_body">
                   </tbody>
                 </table>
               </div>
@@ -861,9 +1001,15 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="field">
         <label class="label">Date</label>
         <div class="control">
-          <input class="input" type="text" placeholder="e.g. Thursday" required />
+          <input class="input" type="date" id="new_class_date" required />
         </div>
       </div>
+        <div class="field">
+          <label class="label">Instructor</label>
+          <div class="control">
+            <input class="input" type="text" id="new_class_instructor" required />
+          </div>
+        </div>
       <div class="field is-grouped is-justify-content-center">
         <div class="control">
           <button type="submit" class="button has-background-info-dark has-text-white">Add</button>
@@ -920,6 +1066,57 @@ document.addEventListener("DOMContentLoaded", () => {
       `);
     setTimeout(() => {
       show_users();
+      loadClassesIntoTable();
+
+      const form = document.getElementById("addClassForm");
+      if (form) {
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          const name = form
+            .querySelector('input[placeholder="e.g. Zumba"]')
+            .value.trim();
+          const time = form
+            .querySelector('input[placeholder="e.g. 5:00 PM"]')
+            .value.trim();
+          const dateInput = document.getElementById("new_class_date").value;
+          const instructor = document
+            .getElementById("new_class_instructor")
+            .value.trim();
+
+          if (!name || !time || !dateInput || !instructor) {
+            configure_messages_bar("Please fill out all fields.");
+            return;
+          }
+
+          const date = new Date(dateInput);
+          if (isNaN(date)) {
+            configure_messages_bar("Invalid date.");
+            return;
+          }
+
+          db.collection("classes")
+            .add({
+              class_name: name,
+              class_time: time,
+              class_date: firebase.firestore.Timestamp.fromDate(new Date(date)),
+              instructor: instructor,
+              enrollment: [],
+            })
+            .then(() => {
+              configure_messages_bar("Class added successfully!");
+              document
+                .getElementById("addClassModal")
+                .classList.remove("is-active");
+              form.reset();
+              loadClassesIntoTable();
+            })
+            .catch((err) => {
+              configure_messages_bar("Error adding class: " + err.message);
+              console.error(err);
+            });
+        });
+      }
     }, 300);
   });
 });
@@ -947,40 +1144,18 @@ document.addEventListener("DOMContentLoaded", () => {
                       </div>
                   
                       <div class="table-container p-4">
-                        <table class="table is-fullwidth is-striped is-hoverable">
+                        <table class="table is-fullwidth is-striped is-hoverable" id="user_classes_table">
                           <thead>
                             <tr>
                               <th>Class Name</th>
                               <th>Date</th>
                               <th>Time</th>
+                              <th>Instructor</th>
                               <th>Actions</th>
                             </tr>
                           </thead>
-                          <tbody>
-                            <tr>
-                              <td>Yoga Flow</td>
-                              <td>2025-04-25</td>
-                              <td>10:00 AM</td>
-                              <td>
-                                <button class="button has-background-info-dark has-text-white">Delete</button>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>HIIT Session</td>
-                              <td>2025-04-26</td>
-                              <td>2:00 PM</td>
-                              <td>
-                                <button class="button has-background-info-dark has-text-white">Delete</button>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Pilates Core</td>
-                              <td>2025-04-27</td>
-                              <td>6:00 PM</td>
-                              <td>
-                                <button class="button has-background-info-dark has-text-white">Delete</button>
-                              </td>
-                            </tr>
+                          <tbody id="user_classes_table_body">
+                            <!-- Filled dynamically by JS -->
                           </tbody>
                         </table>
                       </div>
@@ -1063,6 +1238,7 @@ document.addEventListener("DOMContentLoaded", () => {
     </footer>
       `);
     setTimeout(() => {
+      loadUserClassesTable();
       if (r_e("review_form")) {
         r_e("review_form").addEventListener("submit", (e) => {
           e.preventDefault();
