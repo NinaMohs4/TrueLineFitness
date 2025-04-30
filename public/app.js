@@ -521,22 +521,25 @@ function loadClassesIntoTable() {
 
   classesRef.get().then((snapshot) => {
     let html = "";
+
     if (snapshot.empty) {
-      html = "<tr><td colspan='5'>No classes found.</td></tr>";
+      html = "<tr><td colspan='6'>No classes found.</td></tr>";
     } else {
       snapshot.forEach((doc) => {
         const data = doc.data();
-        const dateStr =
-          data.class_date && data.class_date.toDate
-            ? data.class_date.toDate().toLocaleDateString()
-            : "—";
+        const classDate = data.class_date?.toDate().toLocaleDateString() || "—";
+        const enrolledUsers =
+          Array.isArray(data.enrollment) && data.enrollment.length
+            ? data.enrollment.join("<br>")
+            : "None";
 
         html += `
           <tr>
             <td>${data.class_name}</td>
-            <td>${dateStr}</td>
+            <td>${classDate}</td>
             <td>${data.class_time}</td>
             <td>${data.instructor || "—"}</td>
+            <td>${enrolledUsers}</td>
             <td>
               <button class="button has-background-info-dark has-text-white delete-class-btn" data-id="${
                 doc.id
@@ -544,7 +547,8 @@ function loadClassesIntoTable() {
                 Delete
               </button>
             </td>
-          </tr>`;
+          </tr>
+        `;
       });
     }
 
@@ -556,6 +560,40 @@ function loadClassesIntoTable() {
   });
 }
 
+db.collection("classes")
+  .get()
+  .then((snapshot) => {
+    let html = "";
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const enrolled =
+        data.enrollment && data.enrollment.length > 0
+          ? data.enrollment.join("<br>")
+          : "None";
+
+      const classDate = data.class_date?.toDate().toLocaleDateString() || "—";
+
+      html += `
+      <tr>
+        <td>${data.class_name}</td>
+        <td>${classDate}</td>
+        <td>${data.class_time}</td>
+        <td>${data.instructor || "—"}</td>
+        <td>${enrolled}</td>
+        <td>
+          <button class="button is-small is-danger">Delete</button>
+        </td>
+      </tr>
+    `;
+    });
+
+    const tableBody = document.getElementById("classes_table_body");
+    if (tableBody) {
+      tableBody.innerHTML = html;
+      attachDeleteClassListeners(); // if you're using this for delete buttons
+    }
+  });
 function attachDeleteClassListeners() {
   const buttons = document.querySelectorAll(".delete-class-btn");
   buttons.forEach((btn) => {
@@ -964,7 +1002,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       <th>Date</th>
                       <th>Time</th>
                       <th>Instructor</th>
-                      <th>Actions</th>
+                      <th>Registered Users</th>
                     </tr>
                   </thead>
                   <tbody id="classes_table_body">
@@ -1144,20 +1182,21 @@ document.addEventListener("DOMContentLoaded", () => {
                       </div>
                   
                       <div class="table-container p-4">
-                        <table class="table is-fullwidth is-striped is-hoverable" id="user_classes_table">
-                          <thead>
-                            <tr>
-                              <th>Class Name</th>
-                              <th>Date</th>
-                              <th>Time</th>
-                              <th>Instructor</th>
-                              <th>Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody id="user_classes_table_body">
-                            <!-- Filled dynamically by JS -->
-                          </tbody>
-                        </table>
+                        <table class="table is-fullwidth is-striped is-hoverable">
+  <thead>
+    <tr>
+      <th>Class Name</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Instructor</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="user_classes_table_body">
+    <!-- Populated dynamically -->
+  </tbody>
+</table>
+
                       </div>
                     </div>
                   </div>
@@ -1283,14 +1322,36 @@ function loadContent(content) {
 auth.onAuthStateChanged((user) => {
   const signedInElements = document.querySelectorAll(".signedin");
   const signedOutElements = document.querySelectorAll(".signedout");
+  const adminLink = document.getElementById("admin-link");
 
   if (user) {
-    // Show signed-in UI
     signedInElements.forEach((el) => (el.style.display = "flex"));
     signedOutElements.forEach((el) => (el.style.display = "none"));
+    if (r_e("current_user")) r_e("current_user").textContent = user.email;
+
+    // 🔧 Corrected Firestore admin check
+    db.collection("users")
+      .doc(user.uid)
+      .get()
+      .then((doc) => {
+        if (doc.exists && doc.data().admin_status === true) {
+          if (adminLink) adminLink.style.display = "flex";
+        } else {
+          if (adminLink) adminLink.style.display = "none";
+        }
+      });
+
+    if (r_e("r_col")) {
+      show_reviews();
+    }
   } else {
-    // Show signed-out UI
     signedInElements.forEach((el) => (el.style.display = "none"));
     signedOutElements.forEach((el) => (el.style.display = "flex"));
+    if (r_e("current_user")) r_e("current_user").textContent = "";
+    if (adminLink) adminLink.style.display = "none";
+
+    if (r_e("r_col")) {
+      r_e("r_col").innerHTML = "<p>Please sign in to see reviews.</p>";
+    }
   }
 });
