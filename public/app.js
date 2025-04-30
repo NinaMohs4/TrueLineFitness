@@ -11,6 +11,8 @@ let postReviewBtn = document.querySelector("#postReviewBtn");
 let hidden_form = document.querySelector("#hidden_form");
 let content = document.querySelector("#content");
 
+const adminEmails = ["test1@gmail.com", "test14@gmail.com"];
+
 // Firebase auth and db are assumed initialized in HTML already
 
 // Helper function
@@ -35,14 +37,28 @@ function configure_messages_bar(msg) {
 function configure_nav_bar(email) {
   let signedin = document.querySelectorAll(".signedin");
   let signedout = document.querySelectorAll(".signedout");
+  const userLink = r_e("user-link");
+  const adminLink = r_e("admin-link");
+
   if (email) {
     signedin.forEach((item) => (item.style.display = "flex"));
     signedout.forEach((item) => (item.style.display = "none"));
     if (r_e("current_user")) r_e("current_user").textContent = email;
+
+    // Role-based nav visibility
+    if (adminEmails.includes(email)) {
+      if (adminLink) adminLink.style.display = "flex";
+      if (userLink) userLink.style.display = "none";
+    } else {
+      if (adminLink) adminLink.style.display = "none";
+      if (userLink) userLink.style.display = "flex";
+    }
   } else {
     signedin.forEach((item) => (item.style.display = "none"));
-    signedout.forEach((item) => (item.style.display = "block"));
+    signedout.forEach((item) => (item.style.display = "flex"));
     if (r_e("current_user")) r_e("current_user").textContent = "";
+    if (adminLink) adminLink.style.display = "none";
+    if (userLink) userLink.style.display = "none";
   }
 }
 
@@ -93,6 +109,8 @@ if (r_e("signoutbtn")) {
       .signOut()
       .then(() => {
         configure_messages_bar("Signed out successfully.");
+        location.reload();
+        // reloads index.html to reset everything after a user signs out
       })
       .catch((error) => {
         configure_messages_bar("Error signing out: " + error.message);
@@ -104,12 +122,23 @@ if (r_e("signoutbtn")) {
 if (r_e("signup_form")) {
   r_e("signup_form").addEventListener("submit", (e) => {
     e.preventDefault();
+    const name = r_e("signup_name").value.trim();
+    const phone = r_e("signup_phone").value.trim();
     const email = r_e("email").value.trim();
     const password = r_e("password").value.trim();
 
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((cred) => {
+        return db.collection("users").doc(cred.user.uid).set({
+          user_id: cred.user.uid,
+          user_name: name,
+          user_phone: phone,
+          user_email: email,
+          admin_status: false,
+        });
+      })
+      .then(() => {
         configure_messages_bar("Signed up successfully!");
         signup_modal.classList.remove("is-active");
         r_e("signup_form").reset();
@@ -279,6 +308,99 @@ if (r_e("review_form")) {
         configure_messages_bar("Error submitting review: " + error.message);
       });
   });
+}
+
+function loadUsersIntoAdminTable() {
+  db.collection("users")
+    .get()
+    .then((snapshot) => {
+      let html = "";
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        html += `
+          <tr>
+            <td>${data.user_email}</td>
+            <td>
+              <button class="button has-background-info-dark has-text-white delete-user-btn" data-uid="${doc.id}">
+                Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      const table = document.getElementById("users_table_body");
+      if (table) {
+        table.innerHTML = html;
+        attachDeleteUserListeners();
+      }
+    })
+    .catch((err) => {
+      console.error("Failed to load users:", err);
+    });
+}
+
+function attachDeleteUserListeners() {
+  const deleteButtons = document.querySelectorAll(".delete-user-btn");
+  deleteButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const uid = btn.getAttribute("data-uid");
+      if (confirm("Are you sure you want to delete this user?")) {
+        db.collection("users")
+          .doc(uid)
+          .delete()
+          .then(() => {
+            configure_messages_bar("User deleted successfully.");
+            show_users();
+          })
+          .catch((err) => {
+            configure_messages_bar("Error deleting user.");
+            console.error(err);
+          });
+      }
+    });
+  });
+}
+
+function show_users() {
+  const usersRef = db.collection("users");
+
+  usersRef
+    .get()
+    .then((snapshot) => {
+      let html = "";
+      if (snapshot.empty) {
+        html = "<tr><td colspan='2'>No users found.</td></tr>";
+      } else {
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          html += `
+            <tr>
+              <td>${data.user_email}</td>
+              <td>
+                <button class="button has-background-info-dark has-text-white delete-user-btn" data-uid="${doc.id}">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+
+      const tableBody = document.getElementById("users_table_body");
+      if (tableBody) {
+        tableBody.innerHTML = html;
+        attachDeleteUserListeners(); // add listeners to new delete buttons
+      }
+    })
+    .catch((error) => {
+      console.error("Error showing users:", error);
+      const tableBody = document.getElementById("users_table_body");
+      if (tableBody) {
+        tableBody.innerHTML =
+          "<tr><td colspan='2'>Error loading users.</td></tr>";
+      }
+    });
 }
 
 //  BUY PASSES
@@ -766,44 +888,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 </h2>
               </div>
               <div class="table-container p-4">
-                <table class="table is-fullwidth is-striped is-hoverable">
+                <table id="users_table" class="table is-fullwidth is-striped is-hoverable">
                   <thead>
                     <tr>
                       <th>Email</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>user1@example.com</td>
-                      <td>
-                        <button
-                          class="button has-background-info-dark has-text-white"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>user2@example.com</td>
-                      <td>
-                        <button
-                          class="button has-background-info-dark has-text-white"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>admin@example.com</td>
-                      <td>
-                        <button
-                          class="button has-background-info-dark has-text-white"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
+                  <tbody id="users_table_body">
                   </tbody>
                 </table>
               </div>
@@ -826,6 +918,9 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     </footer>
       `);
+    setTimeout(() => {
+      show_users();
+    }, 300);
   });
 });
 

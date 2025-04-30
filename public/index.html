@@ -25,18 +25,36 @@
       <div class="modal-content p-6 has-background-white">
         <h1 class="is-size-3 title">Sign Up</h1>
         <form id="signup_form">
+          
+          <!-- Name -->
+          <div class="field">
+            <label class="label">Name</label>
+            <div class="control">
+              <input type="text" id="signup_name" required />
+            </div>
+          </div>
+
+          <!-- Phone -->
+          <div class="field">
+            <label class="label">Phone</label>
+            <div class="control">
+              <input type="text" id="signup_phone" />
+            </div>
+          </div>
+
           <!-- Email -->
           <div class="field">
             <label class="label">Email</label>
             <div class="control">
-              <input type="email" id="email" />
+              <input type="email" id="email" required />
             </div>
           </div>
+
           <!-- Password -->
           <div class="field">
             <label class="label">Password</label>
             <div class="control">
-              <input type="password" id="password" />
+              <input type="password" id="password" required />
             </div>
           </div>
 
