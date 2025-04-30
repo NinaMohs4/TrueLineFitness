@@ -25,18 +25,36 @@
       <div class="modal-content p-6 has-background-white">
         <h1 class="is-size-3 title">Sign Up</h1>
         <form id="signup_form">
+          
+          <!-- Name -->
+          <div class="field">
+            <label class="label">Name</label>
+            <div class="control">
+              <input type="text" id="signup_name" required />
+            </div>
+          </div>
+
+          <!-- Phone -->
+          <div class="field">
+            <label class="label">Phone</label>
+            <div class="control">
+              <input type="text" id="signup_phone" />
+            </div>
+          </div>
+
           <!-- Email -->
           <div class="field">
             <label class="label">Email</label>
             <div class="control">
-              <input type="email" id="email" />
+              <input type="email" id="email" required />
             </div>
           </div>
+
           <!-- Password -->
           <div class="field">
             <label class="label">Password</label>
             <div class="control">
-              <input type="password" id="password" />
+              <input type="password" id="password" required />
             </div>
           </div>
 
@@ -104,8 +122,8 @@
       <div class="navbar-menu is-active">
         <div class="navbar-end">
           <div class="navbar-item signedin">
-            <span id="current_user" class="has-text-info-dark"></span>
-          </div>
+<!-- <span id="current_user" class="has-text-info-dark"></span> -->
+</div>
           <div class="navbar-item signedout ">
             <a id="signupbtn" class="has-text-info-dark">Sign Up</a>
           </div>
@@ -115,11 +133,11 @@
           <div class="navbar-item signedin is-white">
             <a id="signoutbtn" class="has-text-info-dark">Sign Out</a>
           </div>
-            <div class="navbar-item signedin">
-              <a id="userProfileBtn" href="user.html" class="has-text-info-dark">User Profile</a>
-            </div>
-            <div class="navbar-item signedin admin">
-              <a id="adminProfileBtn" href="admin.html" class="has-text-info-dark">Admin Profile</a>
+          <div class="navbar-item">
+            <a class="navbar-item has-text-info-dark" href="#" id="user-link">User</a>
+          </div>
+            <div class="navbar-item">
+              <a class="navbar-item has-text-info-dark signedin" href="#" id="admin-link" style="display: none;">Admin</a>
             </div>
           </div>
       </div>
@@ -147,7 +165,10 @@
                       <div class="columns">
                         <!-- Left Column -->
                         <div class="column is-one-third has-background-white" id="l_col">
-                          <h2 class="title is-5 has-text-info-dark has-background-info-light p-3 is-flex has-text-centered" style=" height:75px; align-items: center; justify-content: center;"> &nbsp;UPCOMING EVENTS</h2>
+                          <h2 class="title is-5 has-text-info-dark has-background-info-light p-3 is-flex has-text-centered" style="height:75px; align-items: center; justify-content: center; flex-direction: column;">
+                            UPCOMING EVENTS
+                            <small style="font-size: 0.7em;">No Registration Needed</small>
+                          </h2>
                                     <!-- Boxes -->
           <div class="box has-background-info-light">
             <div class="columns">
@@ -157,9 +178,7 @@
                 <p class="has-text-centered">
                   Join Jenner McLeod, certified Foundation Training instructor, as she guides you through the essential elements of healthy posture and biomechanics. Learn to leave pain behind and improve your performance. This series is specifically designed for those new to Foundation Training
                 </p>
-                <div class="has-text-centered mt-2 pt-2">
-                  <button class="button has-background-white is-info-light" id="book_it">Book It</button>
-                </div>
+                
                               </div>
             </div>
           </div>
@@ -171,9 +190,7 @@
                 <p class="mt-0 mb-3 has-text-centered"> Mon May 13 | Madison</p>
                 <p class="has-text-centered">
                   Unlock your body’s potential with Emily Reyes, certified movement specialist and yoga instructor, as she leads you through a transformative series focused on joint mobility, core activation, and sustainable strength. Perfect for beginners and anyone looking to improve flexibility, balance, and injury resilience.                </p>
-<div class="has-text-centered mt-2 pt-2">
-  <button class="button has-background-white is-info-light" id="book_it">Book It</button>
-</div>
+
 
               </div>
             </div>
@@ -184,18 +201,18 @@
                         <!-- Center Column -->
 <div class="column is-one-third" id="main_content">
   <h2 class="title is-5 has-text-info-dark has-background-info-light p-3 is-flex has-text-centered" style=" height:75px; align-items: center; justify-content: center;">
-      &nbsp;CLASS SCHEDULES
+    &nbsp;CLASS DESCRIPTIONS
   </h2>
-  
-  
-  <!-- Static content -->
+
+  <!-- Existing Classes -->
   <div class="box has-background-white">
     <div class="columns">
       <div class="column">
         <p class="title is-5 mb-0 has-text-centered">True North Mornings</p>
-        <p class="mt-0 mb-3 has-text-centered"> Tuesdays 11:00 am | Online</p>
+        <p class="mt-0 mb-3 has-text-centered">Online</p>
         <p class="has-text-centered">
-          45-minutes of Foundation Training plus optional 15-minute Q&A        </p>
+          45-minutes of Foundation Training plus optional 15-minute Q&A
+        </p>
       </div>
     </div>
   </div>
@@ -204,9 +221,10 @@
     <div class="columns">
       <div class="column">
         <p class="title is-5 mb-0 has-text-centered">Pure FT</p>
-        <p class="mt-0 mb-3 has-text-centered"> Saturdays 8:15 am | Studio Melt</p>
+        <p class="mt-0 mb-3 has-text-centered">Studio Melt</p>
         <p class="has-text-centered">
-          This 45 minute long Pure Foundation Training class is suitable for all levels.                 </p>
+          This 45 minute long Pure Foundation Training class is suitable for all levels.
+        </p>
       </div>
     </div>
   </div>
@@ -215,9 +233,22 @@
     <div class="columns">
       <div class="column">
         <p class="title is-5 mb-0 has-text-centered">FT Basecamp</p>
-        <p class="mt-0 mb-3 has-text-centered"> Wednesdays 5:30 pm | Studio Melt</p>
+        <p class="mt-0 mb-3 has-text-centered">Studio Melt</p>
         <p class="has-text-centered">
-          It is time to return to base camp with proper hinging, anchoring, and breathing patterns. In this 45 minute Foundation Training class, you will practice the core principles of this work in standing, kneeling, supine, and prone positions.  Whatever your day holds, from work to family to fitness, it never hurts into return to base camp. Join Jenner on Wednesday evenings at Studio Melt to reset and ground your body with proper breathing and movement patterns.  This class is designed for beginners and pros a like. Every single body can benefit from this work.         </p>
+          It is time to return to base camp with proper hinging, anchoring, and breathing patterns. In this 45 minute Foundation Training class, you will practice the core principles of this work in standing, kneeling, supine, and prone positions. Whatever your day holds, from work to family to fitness, it never hurts to return to base camp. Join Jenner on Wednesday evenings at Studio Melt to reset and ground your body with proper breathing and movement patterns. This class is designed for beginners and pros alike. Every single body can benefit from this work.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="box has-background-white">
+    <div class="columns">
+      <div class="column">
+        <p class="title is-5 mb-0 has-text-centered">Zumba</p>
+        <p class="mt-0 mb-3 has-text-centered">Studio Melt</p>
+        <p class="has-text-centered">
+          Get your heart pumping and body moving with this fun, high-energy dance workout. Zumba blends Latin rhythms and easy-to-follow moves for a total-body cardio experience!
+        </p>
       </div>
     </div>
   </div>
@@ -226,13 +257,52 @@
   <div class="box has-background-white">
     <div class="columns">
       <div class="column">
-        <p class="title is-5 mb-0 has-text-centered">Private Sessions with Jenner</p>
-        <p class="mt-0 mb-3 has-text-centered"> TBD </p>
+        <p class="title is-5 mb-0 has-text-centered">Yoga Flow</p>
+        <p class="mt-0 mb-3 has-text-centered">Online + Studio Melt</p>
         <p class="has-text-centered">
-          1:1 Foundation Training session catered to you. Schedule a time with Jenner directly through email: Jenner@truelinefitness.com        </p>
+          A gentle yet invigorating yoga class that flows through breath and movement to build flexibility, strength, and mindfulness. Perfect for all experience levels.
+        </p>
+
       </div>
     </div>
   </div>
+
+  <div class="box has-background-white">
+    <div class="columns">
+      <div class="column">
+        <p class="title is-5 mb-0 has-text-centered">HIIT Blast</p>
+        <p class="mt-0 mb-3 has-text-centered">Studio Melt</p>
+        <p class="has-text-centered">
+          A high-intensity interval training class designed to burn calories and build endurance. Short, powerful bursts of movement with rest periods — prepare to sweat!
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="box has-background-white">
+    <div class="columns">
+      <div class="column">
+        <p class="title is-5 mb-0 has-text-centered">Pilates Core</p>
+        <p class="mt-0 mb-3 has-text-centered">Online</p>
+        <p class="has-text-centered">
+          A low-impact Pilates class focused on core strength, posture, and control. Great for improving stability and alignment while enhancing overall mobility.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="box has-background-white">
+    <div class="columns">
+      <div class="column">
+        <p class="title is-5 mb-0 has-text-centered">Private Sessions with Jenner</p>
+        <p class="mt-0 mb-3 has-text-centered">TBD</p>
+        <p class="has-text-centered">
+          1:1 Foundation Training session catered to you. Schedule a time with Jenner directly through email: Jenner@truelinefitness.com
+        </p>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Dynamic content area -->
   <div id="dynamic_content" class="mt-4">
@@ -301,8 +371,8 @@
           <button class="button m-3 has-background-info-light is-white" id="search_btn">Search</button>
           <button class="button m-3 has-background-info-light is-white" id="clear_search">Clear Search</button>
       </div>
-    <div class="columns is-mobile is-one-quarter p-3">
-    <div id="r_col" class="bd-notification is-info pt-1 mt-1"></div>
+    <div class="columns is-mobile is-one-quarter p-3 ">
+    <div id="r_col" class="bd-notification is-info pt-1 mt-1 "></div>
     </div>
     </div>
   </div>

@@ -11,6 +11,8 @@ let postReviewBtn = document.querySelector("#postReviewBtn");
 let hidden_form = document.querySelector("#hidden_form");
 let content = document.querySelector("#content");
 
+const adminEmails = ["test1@gmail.com", "test14@gmail.com"];
+
 // Firebase auth and db are assumed initialized in HTML already
 
 // Helper function
@@ -35,14 +37,28 @@ function configure_messages_bar(msg) {
 function configure_nav_bar(email) {
   let signedin = document.querySelectorAll(".signedin");
   let signedout = document.querySelectorAll(".signedout");
+  const userLink = r_e("user-link");
+  const adminLink = r_e("admin-link");
+
   if (email) {
-    signedin.forEach((item) => (item.style.display = "block"));
+    signedin.forEach((item) => (item.style.display = "flex"));
     signedout.forEach((item) => (item.style.display = "none"));
     if (r_e("current_user")) r_e("current_user").textContent = email;
+
+    // Role-based nav visibility
+    if (adminEmails.includes(email)) {
+      if (adminLink) adminLink.style.display = "flex";
+      if (userLink) userLink.style.display = "none";
+    } else {
+      if (adminLink) adminLink.style.display = "none";
+      if (userLink) userLink.style.display = "flex";
+    }
   } else {
     signedin.forEach((item) => (item.style.display = "none"));
-    signedout.forEach((item) => (item.style.display = "block"));
+    signedout.forEach((item) => (item.style.display = "flex"));
     if (r_e("current_user")) r_e("current_user").textContent = "";
+    if (adminLink) adminLink.style.display = "none";
+    if (userLink) userLink.style.display = "none";
   }
 }
 
@@ -93,6 +109,8 @@ if (r_e("signoutbtn")) {
       .signOut()
       .then(() => {
         configure_messages_bar("Signed out successfully.");
+        location.reload();
+        // reloads index.html to reset everything after a user signs out
       })
       .catch((error) => {
         configure_messages_bar("Error signing out: " + error.message);
@@ -104,12 +122,23 @@ if (r_e("signoutbtn")) {
 if (r_e("signup_form")) {
   r_e("signup_form").addEventListener("submit", (e) => {
     e.preventDefault();
+    const name = r_e("signup_name").value.trim();
+    const phone = r_e("signup_phone").value.trim();
     const email = r_e("email").value.trim();
     const password = r_e("password").value.trim();
 
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((cred) => {
+        return db.collection("users").doc(cred.user.uid).set({
+          user_id: cred.user.uid,
+          user_name: name,
+          user_phone: phone,
+          user_email: email,
+          admin_status: false,
+        });
+      })
+      .then(() => {
         configure_messages_bar("Signed up successfully!");
         signup_modal.classList.remove("is-active");
         r_e("signup_form").reset();
@@ -247,6 +276,344 @@ function search_reviews(field, searchTerm) {
         r_e("r_col").innerHTML = "<p>Error during search.</p>";
       }
     });
+}
+
+if (r_e("review_form")) {
+  r_e("review_form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = r_e("review_name").value.trim();
+    const rating = document.querySelector(
+      'input[name="rating"]:checked'
+    )?.value;
+    const desc = r_e("fitness_review").value.trim();
+
+    if (!auth.currentUser) {
+      configure_messages_bar("You must be signed in to leave a review.");
+      return;
+    }
+
+    db.collection("reviews")
+      .add({
+        name: name,
+        rating: rating,
+        desc: desc,
+        email: auth.currentUser.email,
+      })
+      .then(() => {
+        configure_messages_bar("Review submitted successfully!");
+        r_e("review_form").reset();
+        show_reviews();
+      })
+      .catch((error) => {
+        configure_messages_bar("Error submitting review: " + error.message);
+      });
+  });
+}
+
+function loadUsersIntoAdminTable() {
+  db.collection("users")
+    .get()
+    .then((snapshot) => {
+      let html = "";
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        html += `
+          <tr>
+            <td>${data.user_email}</td>
+            <td>
+              <button class="button has-background-info-dark has-text-white delete-user-btn" data-uid="${doc.id}">
+                Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      const table = document.getElementById("users_table_body");
+      if (table) {
+        table.innerHTML = html;
+        attachDeleteUserListeners();
+      }
+    })
+    .catch((err) => {
+      console.error("Failed to load users:", err);
+    });
+}
+
+function attachDeleteUserListeners() {
+  const deleteButtons = document.querySelectorAll(".delete-user-btn");
+  deleteButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const uid = btn.getAttribute("data-uid");
+      if (confirm("Are you sure you want to delete this user?")) {
+        db.collection("users")
+          .doc(uid)
+          .delete()
+          .then(() => {
+            configure_messages_bar("User deleted successfully.");
+            show_users();
+          })
+          .catch((err) => {
+            configure_messages_bar("Error deleting user.");
+            console.error(err);
+          });
+      }
+    });
+  });
+}
+
+function show_users() {
+  const usersRef = db.collection("users");
+
+  usersRef
+    .get()
+    .then((snapshot) => {
+      let html = "";
+      if (snapshot.empty) {
+        html = "<tr><td colspan='2'>No users found.</td></tr>";
+      } else {
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          html += `
+            <tr>
+              <td>${data.user_email}</td>
+              <td>
+                <button class="button has-background-info-dark has-text-white delete-user-btn" data-uid="${doc.id}">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+
+      const tableBody = document.getElementById("users_table_body");
+      if (tableBody) {
+        tableBody.innerHTML = html;
+        attachDeleteUserListeners(); // add listeners to new delete buttons
+      }
+    })
+    .catch((error) => {
+      console.error("Error showing users:", error);
+      const tableBody = document.getElementById("users_table_body");
+      if (tableBody) {
+        tableBody.innerHTML =
+          "<tr><td colspan='2'>Error loading users.</td></tr>";
+      }
+    });
+}
+
+function loadUserClassesTable() {
+  const tableBody = document.querySelector("#user_classes_table_body");
+  if (!auth.currentUser || !tableBody) return;
+
+  db.collection("classes")
+    .orderBy("class_date")
+    .get()
+    .then((snapshot) => {
+      let html = "";
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const isEnrolled = data.enrollment.includes(auth.currentUser.email);
+        const dateStr = data.class_date.toDate().toLocaleDateString();
+
+        html += `
+          <tr>
+            <td>${data.class_name}</td>
+            <td>${dateStr}</td>
+            <td>${data.class_time}</td>
+            <td>${data.instructor || "—"}</td>
+            <td>
+              <button class="button ${
+                isEnrolled ? "is-danger" : "is-success"
+              } enroll-btn" 
+                      data-id="${doc.id}" data-action="${
+          isEnrolled ? "leave" : "join"
+        }">
+                ${isEnrolled ? "Leave" : "Join"}
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      tableBody.innerHTML = html;
+      attachEnrollListeners();
+    })
+    .catch((err) => {
+      console.error("Error loading classes for user:", err);
+      tableBody.innerHTML = `<tr><td colspan='5'>Error loading classes.</td></tr>`;
+    });
+}
+
+function attachEnrollListeners() {
+  const buttons = document.querySelectorAll(".enroll-btn");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const classId = btn.getAttribute("data-id");
+      const action = btn.getAttribute("data-action");
+      const userEmail = auth.currentUser?.email;
+
+      if (!userEmail) {
+        configure_messages_bar("You must be signed in to perform this action.");
+        return;
+      }
+
+      const classRef = db.collection("classes").doc(classId);
+
+      const updateData =
+        action === "join"
+          ? { enrollment: firebase.firestore.FieldValue.arrayUnion(userEmail) }
+          : {
+              enrollment: firebase.firestore.FieldValue.arrayRemove(userEmail),
+            };
+
+      classRef
+        .update(updateData)
+        .then(() => {
+          configure_messages_bar(`Successfully ${action}ed the class.`);
+          loadUserClassesTable(); // or refresh UI if needed
+        })
+        .catch((err) => {
+          console.error("Error updating enrollment:", err);
+          configure_messages_bar("Error updating enrollment.");
+        });
+    });
+  });
+}
+
+if (document.getElementById("addClassForm")) {
+  document.getElementById("addClassForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const name = form
+      .querySelector('input[placeholder="e.g. Zumba"]')
+      .value.trim();
+    const time = form
+      .querySelector('input[placeholder="e.g. 5:00 PM"]')
+      .value.trim();
+    const date = form
+      .querySelector('input[placeholder="e.g. Thursday"]')
+      .value.trim();
+
+    db.collection("classes")
+      .add({
+        class_name: name,
+        class_time: time,
+        class_date: firebase.firestore.Timestamp.fromDate(new Date(date)),
+        instructor: form.querySelector("#new_class_instructor").value.trim(),
+        enrollment: [],
+      })
+      .then(() => {
+        configure_messages_bar("Class added successfully!");
+        document.getElementById("addClassModal").classList.remove("is-active");
+        form.reset();
+        loadClassesIntoTable(); // reload classes
+      })
+      .catch((err) => {
+        configure_messages_bar("Error adding class: " + err.message);
+        console.error(err);
+      });
+  });
+}
+
+function loadClassesIntoTable() {
+  const classesRef = db.collection("classes").orderBy("class_date");
+
+  classesRef.get().then((snapshot) => {
+    let html = "";
+
+    if (snapshot.empty) {
+      html = "<tr><td colspan='6'>No classes found.</td></tr>";
+    } else {
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const classDate = data.class_date?.toDate().toLocaleDateString() || "—";
+        const enrolledUsers =
+          Array.isArray(data.enrollment) && data.enrollment.length
+            ? data.enrollment.join("<br>")
+            : "None";
+
+        html += `
+          <tr>
+            <td>${data.class_name}</td>
+            <td>${classDate}</td>
+            <td>${data.class_time}</td>
+            <td>${data.instructor || "—"}</td>
+            <td>${enrolledUsers}</td>
+            <td>
+              <button class="button has-background-info-dark has-text-white delete-class-btn" data-id="${
+                doc.id
+              }">
+                Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    const tableBody = document.getElementById("classes_table_body");
+    if (tableBody) {
+      tableBody.innerHTML = html;
+      attachDeleteClassListeners();
+    }
+  });
+}
+
+db.collection("classes")
+  .get()
+  .then((snapshot) => {
+    let html = "";
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const enrolled =
+        data.enrollment && data.enrollment.length > 0
+          ? data.enrollment.join("<br>")
+          : "None";
+
+      const classDate = data.class_date?.toDate().toLocaleDateString() || "—";
+
+      html += `
+      <tr>
+        <td>${data.class_name}</td>
+        <td>${classDate}</td>
+        <td>${data.class_time}</td>
+        <td>${data.instructor || "—"}</td>
+        <td>${enrolled}</td>
+        <td>
+          <button class="button is-small is-danger">Delete</button>
+        </td>
+      </tr>
+    `;
+    });
+
+    const tableBody = document.getElementById("classes_table_body");
+    if (tableBody) {
+      tableBody.innerHTML = html;
+      attachDeleteClassListeners(); // if you're using this for delete buttons
+    }
+  });
+function attachDeleteClassListeners() {
+  const buttons = document.querySelectorAll(".delete-class-btn");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      if (confirm("Are you sure you want to delete this class?")) {
+        db.collection("classes")
+          .doc(id)
+          .delete()
+          .then(() => {
+            configure_messages_bar("Class deleted.");
+            loadClassesIntoTable();
+          })
+          .catch((err) => {
+            configure_messages_bar("Error deleting class.");
+            console.error(err);
+          });
+      }
+    });
+  });
 }
 
 //  BUY PASSES
@@ -603,6 +970,388 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  r_e("admin-link").addEventListener("click", (event) => {
+    event.preventDefault();
+    loadContent(`
+      <div id="admin">
+    <section class="section">
+      <div class="container">
+        <h1 class="title has-text-centered">
+          Profile <i class="fa-regular fa-user"></i>
+        </h1>
+        <div class="columns is-flex is-align-items-stretch">
+          <!-- My Classes Box -->
+          <div class="column">
+            <div class="box is-fullheight">
+              <div class="has-background-info-light p-3">
+                <h2
+                  class="title is-4 has-text-centered has-text-weight-bold has-text-info-dark"
+                >
+                  Classes
+                </h2>
+              </div>
+              <div class="table-container p-4">
+                <table
+                  id="classes_table"
+                  class="table is-fullwidth is-striped is-hoverable"
+                >
+                  <thead>
+                    <tr>
+                      <th>Class Name</th>
+                      <th>Date</th>
+                      <th>Time</th>
+                      <th>Instructor</th>
+                      <th>Registered Users</th>
+                    </tr>
+                  </thead>
+                  <tbody id="classes_table_body">
+                  </tbody>
+                </table>
+              </div>
+              <div class="has-text-centered mt-4">
+                <button
+                  class="button has-background-info-dark has-text-white"
+                  onclick="document.getElementById('addClassModal').classList.add('is-active')"
+                >
+                  Add Class
+                </button>
+              </div>
+
+<!-- Add Class Modal -->
+<div id="addClassModal" class="modal">
+  <div class="modal-background" onclick="document.getElementById('addClassModal').classList.remove('is-active')"></div>
+  <div class="modal-content box">
+    <h2 class="title is-4 has-text-centered">Add New Class</h2>
+    <form id="addClassForm">
+      <div class="field">
+        <label class="label">Class Name</label>
+        <div class="control">
+          <input class="input" type="text" placeholder="e.g. Zumba" required />
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Time</label>
+        <div class="control">
+          <input class="input" type="text" placeholder="e.g. 5:00 PM" required />
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Date</label>
+        <div class="control">
+          <input class="input" type="date" id="new_class_date" required />
+        </div>
+      </div>
+        <div class="field">
+          <label class="label">Instructor</label>
+          <div class="control">
+            <input class="input" type="text" id="new_class_instructor" required />
+          </div>
+        </div>
+      <div class="field is-grouped is-justify-content-center">
+        <div class="control">
+          <button type="submit" class="button has-background-info-dark has-text-white">Add</button>
+        </div>
+        <div class="control">
+          <button type="button" class="button is-light" onclick="document.getElementById('addClassModal').classList.remove('is-active')">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+
+          <!-- Registered Users Box -->
+          <div class="column">
+            <div class="box is-fullheight">
+              <div class="has-background-info-light p-3">
+                <h2
+                  class="title is-4 has-text-centered has-text-weight-bold has-text-info-dark"
+                >
+                  Registered Users
+                </h2>
+              </div>
+              <div class="table-container p-4">
+                <table id="users_table" class="table is-fullwidth is-striped is-hoverable">
+                  <thead>
+                    <tr>
+                      <th>Email</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="users_table_body">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer is-flex is-justify-content-center mt-2 p-1">
+      <div class="content has-text-centered" style="width: fit-content">
+        <p>
+          <b>Copyright &copy; 2025 True Line Fitness</b><br />
+          301 W Beltline Hwy Suite 103<br />
+          Madison, WI 53713 <br />
+          info@truelinefitness.com
+        </p>
+      </div>
+    </footer>
+      `);
+    setTimeout(() => {
+      show_users();
+      loadClassesIntoTable();
+
+      const form = document.getElementById("addClassForm");
+      if (form) {
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          const name = form
+            .querySelector('input[placeholder="e.g. Zumba"]')
+            .value.trim();
+          const time = form
+            .querySelector('input[placeholder="e.g. 5:00 PM"]')
+            .value.trim();
+          const dateInput = document.getElementById("new_class_date").value;
+          const instructor = document
+            .getElementById("new_class_instructor")
+            .value.trim();
+
+          if (!name || !time || !dateInput || !instructor) {
+            configure_messages_bar("Please fill out all fields.");
+            return;
+          }
+
+          const date = new Date(dateInput);
+          if (isNaN(date)) {
+            configure_messages_bar("Invalid date.");
+            return;
+          }
+
+          db.collection("classes")
+            .add({
+              class_name: name,
+              class_time: time,
+              class_date: firebase.firestore.Timestamp.fromDate(new Date(date)),
+              instructor: instructor,
+              enrollment: [],
+            })
+            .then(() => {
+              configure_messages_bar("Class added successfully!");
+              document
+                .getElementById("addClassModal")
+                .classList.remove("is-active");
+              form.reset();
+              loadClassesIntoTable();
+            })
+            .catch((err) => {
+              configure_messages_bar("Error adding class: " + err.message);
+              console.error(err);
+            });
+        });
+      }
+    }, 300);
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  r_e("user-link").addEventListener("click", (event) => {
+    event.preventDefault();
+    loadContent(`
+      <div id="user">
+    <section class="section">
+        <div class="container">
+          <h1 class="title has-text-centered">Profile <i class="fa-regular fa-user "></i>
+          </h1>          
+    
+            <div class="columns is-flex is-align-items-stretch">
+                <!-- Online Consult: Athletes -->
+                <div class="column">
+                    <div class="box is-fullheight">
+                      <div class="columns">
+                        <div class="column">
+                            <div class="has-background-info-light p-3">
+                          <h2 class="title is-4 has-text-centered mt-3 pt-3 has-text-weight-bold has-text-info-dark">My Classes</h2>
+                        </div>
+                        </div>
+                      </div>
+                  
+                      <div class="table-container p-4">
+                        <table class="table is-fullwidth is-striped is-hoverable">
+  <thead>
+    <tr>
+      <th>Class Name</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Instructor</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="user_classes_table_body">
+    <!-- Populated dynamically -->
+  </tbody>
+</table>
+
+                      </div>
+                    </div>
+                  </div>
+    
+                <!-- Online Consult: Coaches -->
+                <div class="column">
+                    <div class="box is-fullheight">
+                      <div class="columns">
+                        <div class="column">
+                            <div class="has-background-info-light p-3">
+                          <h2 class="title is-4 has-text-centered mt-3 pt-3 has-text-weight-bold has-text-info-dark">Leave A Review</h2>
+                        </div>
+                        </div>
+                      </div>
+                      <form class="p-4" id="review_form">
+                        <!-- Name -->
+                        <div class="field">
+                          <label class="label">Name</label>
+                          <div class="control">
+                            <input class="input" type="text" placeholder="Your name" name="name" required id="review_name" />
+                          </div>
+                        </div>
+                  
+                        <!-- Star Rating -->
+                        <div class="field">
+                          <label class="label">Rating</label>
+                          <div class="control">
+                            <label class="radio">
+                              <input type="radio" name="rating" value="1" id="review_rating" /> 1
+                            </label>
+                            <label class="radio">
+                              <input type="radio" name="rating" value="2" id="review_rating"/> 2
+                            </label>
+                            <label class="radio">
+                              <input type="radio" name="rating" value="3" id="review_rating"/> 3
+                            </label>
+                            <label class="radio">
+                              <input type="radio" name="rating" value="4" id="review_rating"/> 4
+                            </label>
+                            <label class="radio">
+                              <input type="radio" name="rating" value="5" id="review_rating"/> 5
+                            </label>
+                          </div>
+                        </div>
+                  
+                        <!-- Comment -->
+                        <div class="field">
+                          <label class="label">Comment</label>
+                          <div class="control">
+                            <textarea class="textarea" name="comment" placeholder="Share your thoughts..." required id="fitness_review"></textarea>
+                          </div>
+                        </div>
+                  
+                        <!-- Submit -->
+                        <div class="field is-grouped is-justify-content-center">
+                          <div class="control">
+                            <button class="button has-background-info-dark has-text-white" type="submit">Submit Review</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+              </div>
+            </div>
+
+  </body>
+
+ <!-- footer -->
+    <footer class="footer is-flex is-justify-content-center mt-2 p-1">
+      <div class="content has-text-centered" style="width: fit-content">
+        <p>
+          <b>Copyright &copy; 2025 True Line Fitness</b><br />
+          301 W Beltline Hwy Suite 103<br />
+          Madison, WI 53713 <br />
+          info@truelinefitness.com
+        </p>
+      </div>
+    </footer>
+      `);
+    setTimeout(() => {
+      loadUserClassesTable();
+      if (r_e("review_form")) {
+        r_e("review_form").addEventListener("submit", (e) => {
+          e.preventDefault();
+          const name = r_e("review_name").value.trim();
+          const rating = document.querySelector(
+            'input[name="rating"]:checked'
+          )?.value;
+          const desc = r_e("fitness_review").value.trim();
+
+          if (!auth.currentUser) {
+            configure_messages_bar("You must be signed in to leave a review.");
+            return;
+          }
+
+          db.collection("reviews")
+            .add({
+              name: name,
+              rating: rating,
+              desc: desc,
+              email: auth.currentUser.email,
+            })
+            .then(() => {
+              configure_messages_bar("Review submitted successfully!");
+              r_e("review_form").reset();
+              show_reviews();
+            })
+            .catch((error) => {
+              configure_messages_bar(
+                "Error submitting review: " + error.message
+              );
+            });
+        });
+      }
+    }, 300); // slight delay to ensure DOM is ready
+  });
+});
+
 function loadContent(content) {
   document.querySelector("#main").innerHTML = content;
 }
+
+auth.onAuthStateChanged((user) => {
+  const signedInElements = document.querySelectorAll(".signedin");
+  const signedOutElements = document.querySelectorAll(".signedout");
+  const adminLink = document.getElementById("admin-link");
+
+  if (user) {
+    signedInElements.forEach((el) => (el.style.display = "flex"));
+    signedOutElements.forEach((el) => (el.style.display = "none"));
+    if (r_e("current_user")) r_e("current_user").textContent = user.email;
+
+    // 🔧 Corrected Firestore admin check
+    db.collection("users")
+      .doc(user.uid)
+      .get()
+      .then((doc) => {
+        if (doc.exists && doc.data().admin_status === true) {
+          if (adminLink) adminLink.style.display = "flex";
+        } else {
+          if (adminLink) adminLink.style.display = "none";
+        }
+      });
+
+    if (r_e("r_col")) {
+      show_reviews();
+    }
+  } else {
+    signedInElements.forEach((el) => (el.style.display = "none"));
+    signedOutElements.forEach((el) => (el.style.display = "flex"));
+    if (r_e("current_user")) r_e("current_user").textContent = "";
+    if (adminLink) adminLink.style.display = "none";
+
+    if (r_e("r_col")) {
+      r_e("r_col").innerHTML = "<p>Please sign in to see reviews.</p>";
+    }
+  }
+});
