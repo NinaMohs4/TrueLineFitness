@@ -16,45 +16,32 @@ async function go() {
   // SIGN UP ********************************************
   await page.click("#signupbtn");
 
-  // provide email and pw for sign-in
-  await page.type("#email_", "testing@gmail.com");
-  await page.type("#password_", "test123");
+  // provide information for sign up
+  await page.type("#signup_name", "In-Class Test");
+  await page.type("#signup_phone", "123-456-7890");
+  await page.type("#email", "testing@gmail.com");
+  await page.type("#password", "test123");
 
   //   click submit button
-  await page.click("#signup_form > div:nth-child(3) > div > button");
+  await page.click("#signup_form > div:nth-child(5) > div > button");
 
   // force a delay
   await new Promise((r) => setTimeout(r, 1000));
 
-  // SIGN IN ********************************************
-  await page.click("#signinbtn");
-
-  // provide email and pw for sign-in
-  await page.type("#email_", "testing@gmail.com");
-  await page.type("#password_", "test123");
-
-  //   click submit button
-  await page.click("#signin_form > div:nth-child(3) > div > button");
-
   // click user page
-  await page.click("#userProfileBtn");
+  await page.click("#user-link");
 
   // LEAVE A REVIEW ********************************************
+  await page.type("#review_name", "In-Class Test");
+  await page.click("#review_rating");
   await page.type(
-    "body > section > div > div > div:nth-child(3) > div > form > div:nth-child(1) > div > input",
-    "In-Class Test"
-  );
-  await page.click(
-    "body > section > div > div > div:nth-child(3) > div > form > div:nth-child(2) > div > label:nth-child(5) > input[type=radio]"
-  );
-  await page.type(
-    "body > section > div > div > div:nth-child(3) > div > form > div:nth-child(3) > div > textarea",
+    "#fitness_review",
     "TEST! I loved my class with True Line Fitness!"
   );
 
   // click submit button
   await page.click(
-    "body > section > div > div > div:nth-child(3) > div > form > div.field.is-grouped.is-justify-content-center > div > button"
+    "#review_form > div.field.is-grouped.is-justify-content-center > div > button"
   );
 
   //   close browser

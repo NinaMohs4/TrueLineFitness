@@ -27,28 +27,23 @@ async function go() {
   await page.click("#signin_form > div:nth-child(3) > div > button");
 
   // click admin page
-  await page.click("#adminProfileBtn");
+  await page.click("#admin-link");
 
   // CREATE A CLASS ********************************************
   await page.click(
-    "body > section > div > div > div:nth-child(1) > div > div.has-text-centered.mt-4 > button"
+    "#admin > section > div > div > div > div.box.is-fullheight > div.has-text-centered.mt-4 > button"
   );
   await page.type(
-    "#addClassModal > div.modal-content.box > form > div:nth-child(1) > div > input",
+    "#addClassForm > div:nth-child(1) > div > input",
     "Test Class"
   );
-  await page.type(
-    "#addClassModal > div.modal-content.box > form > div:nth-child(2) > div > input",
-    "2:30 PM"
-  );
-  await page.type(
-    "#addClassModal > div.modal-content.box > form > div:nth-child(3) > div > input",
-    "2025-05-01"
-  );
+  await page.type("#addClassForm > div:nth-child(2) > div > input", "2:30 PM");
+  await page.type("#new_class_date", "05012025");
+  await page.type("#new_class_instructor", "Jenner McLeod");
 
   // click submit button
   await page.click(
-    "#addClassModal > div.modal-content.box > form > div.field.is-grouped.is-justify-content-center > div:nth-child(1) > button"
+    "#addClassForm > div.field.is-grouped.is-justify-content-center > div:nth-child(1) > button"
   );
 
   //   close browser
