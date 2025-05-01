@@ -5,7 +5,7 @@ const puppeteer = require("puppeteer");
 async function go() {
   const browser = await puppeteer.launch({
     headless: false,
-    slowMo: 200,
+    slowMo: 100,
   });
 
   const page = await browser.newPage();

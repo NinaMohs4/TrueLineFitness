@@ -5,7 +5,7 @@ const puppeteer = require("puppeteer");
 async function go() {
   const browser = await puppeteer.launch({
     headless: false,
-    slowMo: 200,
+    slowMo: 100,
   });
 
   const page = await browser.newPage();
@@ -20,7 +20,7 @@ async function go() {
   await page.type("#signup_name", "In-Class Test");
   await page.type("#signup_phone", "123-456-7890");
   await page.type("#email", "testing@gmail.com");
-  await page.type("#password", "test123");
+  await page.type("#password", "testinginclass123");
 
   //   click submit button
   await page.click("#signup_form > div:nth-child(5) > div > button");
@@ -33,7 +33,7 @@ async function go() {
 
   // LEAVE A REVIEW ********************************************
   await page.type("#review_name", "In-Class Test");
-  await page.click("#review_rating");
+  await page.click("#review_rating5");
   await page.type(
     "#fitness_review",
     "TEST! I loved my class with True Line Fitness!"
@@ -43,6 +43,12 @@ async function go() {
   await page.click(
     "#review_form > div.field.is-grouped.is-justify-content-center > div > button"
   );
+
+  // VIEW REVIEW ********************************************
+  await page.click(
+    "body > div.navbar.has-background-info-light > div.navbar-brand > div > a:nth-child(1)"
+  );
+  await page.click("#user_reviews");
 
   //   close browser
   //   browser.close();

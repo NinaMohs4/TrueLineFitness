@@ -1237,7 +1237,7 @@ document.addEventListener("DOMContentLoaded", () => {
                               <input type="radio" name="rating" value="4" id="review_rating"/> 4
                             </label>
                             <label class="radio">
-                              <input type="radio" name="rating" value="5" id="review_rating"/> 5
+                              <input type="radio" name="rating" value="5" id="review_rating5"/> 5
                             </label>
                           </div>
                         </div>
