@@ -44,11 +44,11 @@ async function go() {
     "#review_form > div.field.is-grouped.is-justify-content-center > div > button"
   );
 
-  // VIEW REVIEW ********************************************
-  await page.click(
-    "body > div.navbar.has-background-info-light > div.navbar-brand > div > a:nth-child(1)"
-  );
-  await page.click("#user_reviews");
+  // // VIEW REVIEW ********************************************
+  // await page.click(
+  //   "body > div.navbar.has-background-info-light > div.navbar-brand > div > a:nth-child(1)"
+  // );
+  // await page.click("#user_reviews");
 
   //   close browser
   //   browser.close();
